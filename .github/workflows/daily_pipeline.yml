@@ -38,10 +38,14 @@ jobs:
       - name: Step 3：產出 Dashboard HTML
         run: python scripts/03_build_html.py
 
-      - name: Step 4：commit & push
+      - name: Step 4：commit & push（含衝突重試）
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/stock_history.db docs/index.html data/analysis_cache.pkl
           git diff --staged --quiet || git commit -m "Daily pipeline $(date '+%Y%m%d %H:%M')"
-          git push
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && echo "✅ Push 成功" && break
+            echo "⚠️ push 衝突，第 $i 次重試（等 ${i}0 秒）..."
+            sleep $((i * 10))
+          done
