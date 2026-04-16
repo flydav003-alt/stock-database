@@ -20,35 +20,31 @@ DB_PATH = 'data/stock_history.db'
 # 交易日曆
 # ══════════════════════════════════════════════════════════
 
-def fetch_trade_dates_for_month(ym):
-    """抓單一年月的交易日清單，回傳 set of YYYYMMDD"""
-    url = f'https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY_ALL?date={ym}01&response=json'
-    try:
-        r = requests.get(url, timeout=15, headers={'User-Agent': 'Mozilla/5.0'})
-        j = r.json()
-        if j.get('stat') != 'OK' or not j.get('data'):
-            return set()
-        dates = set()
-        for row in j['data']:
-            parts = str(row[0]).strip().split('/')
-            if len(parts) == 3:
-                yr = int(parts[0]) + 1911
-                dates.add(f'{yr}{parts[1].zfill(2)}{parts[2].zfill(2)}')
-        return dates
-    except:
-        return set()
+def build_trade_calendar_simple(needed_months):
+    """
+    用週一到週五近似交易日，再排除週末
+    不依賴 TWSE API，完全本地計算，快速穩定
+    """
+    today = datetime.today()
+    today_str = today.strftime('%Y%m%d')
+    all_dates = set()
+
+    for ym in needed_months:
+        yr = int(ym[:4])
+        mm = int(ym[4:])
+        import calendar
+        _, days_in_month = calendar.monthrange(yr, mm)
+        for day in range(1, days_in_month + 1):
+            d = datetime(yr, mm, day)
+            if d.weekday() < 5:  # 週一到週五
+                all_dates.add(d.strftime('%Y%m%d'))
+
+    result = sorted([d for d in all_dates if d <= today_str])
+    print(f'  交易日曆：{len(result)} 天（週一到週五近似，涵蓋 {len(needed_months)} 個月）')
+    return result
 
 def build_trade_calendar(needed_months):
-    """只抓 needed_months 裡的月份，needed_months = set of 'YYYYMM'"""
-    all_dates = set()
-    today_str = datetime.today().strftime('%Y%m%d')
-    for ym in sorted(needed_months):
-        dates = fetch_trade_dates_for_month(ym)
-        all_dates.update(dates)
-        time.sleep(0.25)
-    result = sorted([d for d in all_dates if d <= today_str])
-    print(f'  交易日曆：{len(result)} 天，涵蓋 {len(needed_months)} 個月')
-    return result
+    return build_trade_calendar_simple(needed_months)
 
 def get_nth_after(entry_date_str, n, trade_dates):
     entry = entry_date_str.replace('-', '')
