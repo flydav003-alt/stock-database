@@ -279,6 +279,63 @@ def calc_performance(conn):
         print(f'  {cat}（{len(sub)}筆）T+3={r["t3_win"]}% 均報={r["t3_avg"]}%')
     return results
 
+# ══════════════════════════════════════════════════════════
+# 產業對照表快取
+# ══════════════════════════════════════════════════════════
+
+INDUSTRY_CACHE_PATH = 'data/industry_map.json'
+
+def build_industry_cache():
+    """從 TWSE + TPEX OpenAPI 抓完整產業分類，快取30天"""
+    import json, os
+    if os.path.exists(INDUSTRY_CACHE_PATH):
+        age = (datetime.now().timestamp() - os.path.getmtime(INDUSTRY_CACHE_PATH)) / 86400
+        if age < 30:
+            with open(INDUSTRY_CACHE_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            print(f'  產業快取有效（{age:.0f}天前），共 {len(data)} 筆')
+            return data
+
+    print('  重新抓取產業分類...')
+    result = {}
+
+    # TWSE 上市
+    try:
+        r = requests.get('https://openapi.twse.com.tw/v1/opendata/t187ap03_L',
+                         timeout=20, headers={'User-Agent': 'Mozilla/5.0'})
+        for row in r.json():
+            code = str(row.get('公司代號', '')).strip()
+            ind  = str(row.get('產業類別', '')).strip()
+            if code and ind:
+                result[code] = ind
+        print(f'  TWSE 上市：{len(result)} 筆')
+        time.sleep(0.5)
+    except Exception as e:
+        print(f'  ⚠️ TWSE 失敗：{e}')
+
+    # TPEX 上櫃
+    tpex_n = 0
+    try:
+        r = requests.get('https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O',
+                         timeout=20, headers={'User-Agent': 'Mozilla/5.0'})
+        for row in r.json():
+            code = str(row.get('公司代號', '')).strip()
+            ind  = str(row.get('產業類別', '')).strip()
+            if code and ind and code not in result:
+                result[code] = ind
+                tpex_n += 1
+        print(f'  TPEX 上櫃：{tpex_n} 筆')
+    except Exception as e:
+        print(f'  ⚠️ TPEX 失敗：{e}')
+
+    if result:
+        os.makedirs('data', exist_ok=True)
+        with open(INDUSTRY_CACHE_PATH, 'w', encoding='utf-8') as f:
+            json.dump(result, f, ensure_ascii=False)
+        print(f'  ✅ 產業快取儲存：{len(result)} 筆')
+    return result
+
+
 def main():
     print('='*50)
     print(f'[02_analyze] {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
