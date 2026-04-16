@@ -283,6 +283,8 @@ def main():
     print('='*50)
     print(f'[02_analyze] {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
     print('='*50)
+    print('\n[產業分類快取]')
+    build_industry_cache()
     conn = sqlite3.connect(DB_PATH)
     fill_future_prices(conn)
     consec_df = detect_consecutive(conn)
