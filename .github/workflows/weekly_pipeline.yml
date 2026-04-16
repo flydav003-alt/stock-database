@@ -1,0 +1,23 @@
+name: 週報 Email
+
+on:
+  schedule:
+    - cron: '0 9 * * 5'  # 每週五 UTC 09:00 = 台灣 17:00
+  workflow_dispatch:
+
+jobs:
+  weekly:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: 發送週報
+        env:
+          GMAIL_USER:    ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+          EMAIL_TO:      ${{ secrets.EMAIL_TO }}
+          REPORT_URL:    ${{ secrets.REPORT_URL }}
+        run: python scripts/weekly_report.py
