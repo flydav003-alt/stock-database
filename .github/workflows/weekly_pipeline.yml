@@ -2,7 +2,7 @@ name: 週報 Email
 
 on:
   schedule:
-    - cron: '0 9 * * 5'  # 每週五 UTC 09:00 = 台灣 17:00
+    - cron: '30 11 * * 5'  # 每週五 UTC 09:00 = 台灣 17:00
   workflow_dispatch:
 
 jobs:
