@@ -1,130 +1,128 @@
 """
-02_analyze.py — 連續入選偵測 + 補抓 T+1/T+3/T+5 價格
-使用 TWSE/TPEX OpenAPI 抓價格，不用 yfinance
+02_analyze.py — 連續入選偵測 + 補抓 T+1/T+3/T+5 價格（優化版）
 
-價格抓取邏輯：
-- 每次執行找出 DB 裡 price_t1/t3/t5 還是 NULL 的紀錄
-- 根據入選日往後數第 N 個交易日，抓那天的收盤價
-- 與股票有沒有再次入選完全無關
+優化重點：
+1. 交易日曆只抓必要的月份
+2. 按月份批次抓價格，不是一筆一筆問
+3. 同一檔股票同一個月只打一次 API
 """
 import sqlite3
 import requests
 import pandas as pd
 import time
+import pickle
 from datetime import datetime, timedelta
+from collections import defaultdict
 
 DB_PATH = 'data/stock_history.db'
 
-def fetch_real_trade_dates_twse(year_month_str):
-    date_str = year_month_str + '01'
-    url = f'https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY_ALL?date={date_str}&response=json'
+# ══════════════════════════════════════════════════════════
+# 交易日曆
+# ══════════════════════════════════════════════════════════
+
+def fetch_trade_dates_for_month(ym):
+    """抓單一年月的交易日清單，回傳 set of YYYYMMDD"""
+    url = f'https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY_ALL?date={ym}01&response=json'
     try:
         r = requests.get(url, timeout=15, headers={'User-Agent': 'Mozilla/5.0'})
         j = r.json()
         if j.get('stat') != 'OK' or not j.get('data'):
-            return []
-        dates = []
-        for row in j['data']:
-            tw_date = str(row[0]).strip()
-            parts = tw_date.split('/')
-            if len(parts) == 3:
-                year = int(parts[0]) + 1911
-                mmdd = parts[1].zfill(2) + parts[2].zfill(2)
-                dates.append(f'{year}{mmdd}')
-        return sorted(set(dates))
-    except:
-        return []
-
-def build_trade_calendar(days_back=90):
-    today = datetime.today()
-    year_months = set()
-    d = today
-    for _ in range(days_back + 30):
-        year_months.add(d.strftime('%Y%m'))
-        d -= timedelta(days=1)
-
-    real_dates = set()
-    for ym in sorted(year_months):
-        dates = fetch_real_trade_dates_twse(ym)
-        real_dates.update(dates)
-        time.sleep(0.3)
-
-    today_str = today.strftime('%Y%m%d')
-    if len(real_dates) > 10:
-        result = sorted([d for d in real_dates if d <= today_str])
-        print(f'  交易日曆：{len(result)} 天（真實）')
-        return result
-
-    print('  ⚠️ fallback 至週一到週五')
-    result = []
-    d = today
-    for _ in range(days_back):
-        if d.weekday() < 5:
-            result.append(d.strftime('%Y%m%d'))
-        d -= timedelta(days=1)
-    return sorted(result)
-
-def get_nth_trading_day_after(entry_date_str, n, trade_dates_sorted):
-    entry = entry_date_str.replace('-', '')
-    future = [d for d in trade_dates_sorted if d > entry]
-    return future[n - 1] if len(future) >= n else None
-
-def fetch_price_twse_on_date(stock_id, target_date_str):
-    url = (f'https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY'
-           f'?date={target_date_str}&stockNo={stock_id}&response=json')
-    try:
-        r = requests.get(url, timeout=15, headers={'User-Agent': 'Mozilla/5.0'})
-        j = r.json()
-        if j.get('stat') != 'OK' or not j.get('data'):
-            return None
-        target_mmdd = f'{target_date_str[4:6]}/{target_date_str[6:]}'
+            return set()
+        dates = set()
         for row in j['data']:
             parts = str(row[0]).strip().split('/')
             if len(parts) == 3:
-                mmdd = f'{parts[1].zfill(2)}/{parts[2].zfill(2)}'
-                if mmdd == target_mmdd:
-                    close_str = str(row[6]).replace(',', '').strip()
-                    if close_str not in ('--', '', 'X'):
-                        return float(close_str)
-        return None
+                yr = int(parts[0]) + 1911
+                dates.add(f'{yr}{parts[1].zfill(2)}{parts[2].zfill(2)}')
+        return dates
     except:
-        return None
+        return set()
 
-def fetch_price_tpex_on_date(stock_id, target_date_str):
-    year = int(target_date_str[:4]) - 1911
-    mm   = target_date_str[4:6]
-    dd   = target_date_str[6:]
-    date_tw = f'{year}/{mm}/{dd}'
+def build_trade_calendar(needed_months):
+    """只抓 needed_months 裡的月份，needed_months = set of 'YYYYMM'"""
+    all_dates = set()
+    today_str = datetime.today().strftime('%Y%m%d')
+    for ym in sorted(needed_months):
+        dates = fetch_trade_dates_for_month(ym)
+        all_dates.update(dates)
+        time.sleep(0.25)
+    result = sorted([d for d in all_dates if d <= today_str])
+    print(f'  交易日曆：{len(result)} 天，涵蓋 {len(needed_months)} 個月')
+    return result
+
+def get_nth_after(entry_date_str, n, trade_dates):
+    entry = entry_date_str.replace('-', '')
+    future = [d for d in trade_dates if d > entry]
+    return future[n-1] if len(future) >= n else None
+
+# ══════════════════════════════════════════════════════════
+# 批次抓價格（同股票同月份只打一次 API）
+# ══════════════════════════════════════════════════════════
+
+def fetch_month_prices_twse(stock_id, ym):
+    """抓上市股某月全部收盤價，回傳 {YYYYMMDD: float}"""
+    url = (f'https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY'
+           f'?date={ym}01&stockNo={stock_id}&response=json')
+    try:
+        r = requests.get(url, timeout=15, headers={'User-Agent': 'Mozilla/5.0'})
+        j = r.json()
+        if j.get('stat') != 'OK' or not j.get('data'):
+            return {}
+        result = {}
+        for row in j['data']:
+            parts = str(row[0]).strip().split('/')
+            if len(parts) == 3:
+                yr = int(parts[0]) + 1911
+                key = f'{yr}{parts[1].zfill(2)}{parts[2].zfill(2)}'
+                val = str(row[6]).replace(',', '').strip()
+                if val not in ('--', '', 'X'):
+                    try: result[key] = float(val)
+                    except: pass
+        return result
+    except:
+        return {}
+
+def fetch_month_prices_tpex(stock_id, ym):
+    """抓上櫃股某月全部收盤價，回傳 {YYYYMMDD: float}"""
+    yr_tw = int(ym[:4]) - 1911
+    mm = ym[4:]
     url = (f'https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/'
-           f'st43_result.php?l=zh-tw&d={date_tw}&s={stock_id}')
+           f'st43_result.php?l=zh-tw&d={yr_tw}/{mm}/01&s={stock_id}')
     try:
         r = requests.get(url, timeout=15, headers={'User-Agent': 'Mozilla/5.0'})
         j = r.json()
         if not j.get('aaData'):
-            return None
-        target_mmdd = f'{mm}/{dd}'
+            return {}
+        result = {}
         for row in j['aaData']:
             parts = str(row[0]).strip().split('/')
             if len(parts) == 3:
-                mmdd = f'{parts[1].zfill(2)}/{parts[2].zfill(2)}'
-                if mmdd == target_mmdd:
-                    close_str = str(row[6]).replace(',', '').strip()
-                    if close_str not in ('--', ''):
-                        return float(close_str)
-        return None
+                yr = int(parts[0]) + 1911
+                key = f'{yr}{parts[1].zfill(2)}{parts[2].zfill(2)}'
+                val = str(row[6]).replace(',', '').strip()
+                if val not in ('--', ''):
+                    try: result[key] = float(val)
+                    except: pass
+        return result
     except:
-        return None
+        return {}
 
-def fetch_close_on_date(stock_id, market, target_date_str):
+def fetch_month_prices(stock_id, market, ym):
     if market == 'TSE':
-        p = fetch_price_twse_on_date(stock_id, target_date_str)
-        return p if p else fetch_price_tpex_on_date(stock_id, target_date_str)
+        p = fetch_month_prices_twse(stock_id, ym)
+        return p if p else fetch_month_prices_tpex(stock_id, ym)
     else:
-        p = fetch_price_tpex_on_date(stock_id, target_date_str)
-        return p if p else fetch_price_twse_on_date(stock_id, target_date_str)
+        p = fetch_month_prices_tpex(stock_id, ym)
+        return p if p else fetch_month_prices_twse(stock_id, ym)
+
+# ══════════════════════════════════════════════════════════
+# 主函數：補抓 T+1/T+3/T+5
+# ══════════════════════════════════════════════════════════
 
 def fill_future_prices(conn):
     print('\n[補抓價格]')
+    today_str = datetime.today().strftime('%Y%m%d')
+
     df = pd.read_sql('''
         SELECT id, stock_id, market, date, close,
                price_t1, price_t3, price_t5
@@ -138,48 +136,82 @@ def fill_future_prices(conn):
         print('  ✅ 無需補抓')
         return
 
-    print(f'  需補抓：{len(df)} 筆')
-    trade_dates = build_trade_calendar(days_back=90)
-    today_str   = datetime.today().strftime('%Y%m%d')
+    print(f'  待補抓：{len(df)} 筆')
 
-    updated = 0
-    for idx, (_, row) in enumerate(df.iterrows()):
+    # 找出需要哪些月份的交易日曆
+    needed_months = set()
+    for _, row in df.iterrows():
+        entry = row['date'].replace('-', '')
+        # T+5 大概需要再往後 10 個日曆天，多抓一個月保險
+        d = datetime.strptime(entry, '%Y%m%d')
+        for delta in range(0, 20):
+            nd = d + timedelta(days=delta)
+            needed_months.add(nd.strftime('%Y%m'))
+
+    trade_dates = build_trade_calendar(needed_months)
+
+    # 計算每筆需要抓的目標日期
+    # 格式：{(stock_id, market, target_date): [(id, col), ...]}
+    target_map = defaultdict(list)  # (sid, mkt, ym) -> {date: price}
+    task_list  = []  # (id, col, target_date, sid, mkt)
+
+    for _, row in df.iterrows():
         sid    = str(row['stock_id'])
         market = str(row['market'])
         entry  = str(row['date'])
-        updates = {}
 
-        for n, col in [(1, 'price_t1'), (3, 'price_t3'), (5, 'price_t5')]:
+        for n, col in [(1,'price_t1'), (3,'price_t3'), (5,'price_t5')]:
             if pd.isna(row[col]):
-                td = get_nth_trading_day_after(entry, n, trade_dates)
+                td = get_nth_after(entry, n, trade_dates)
                 if td and td <= today_str:
-                    p = fetch_close_on_date(sid, market, td)
-                    if p:
-                        updates[col] = p
-                        print(f'    {sid} T+{n}({td})={p}')
-                    time.sleep(0.4)
+                    ym = td[:6]
+                    target_map[(sid, market, ym)].append(td)
+                    task_list.append((row['id'], col, td, sid, market, ym))
 
-        if updates:
-            set_clause = ', '.join([f'{k} = ?' for k in updates])
-            conn.execute(f'UPDATE stock_daily SET {set_clause} WHERE id = ?',
-                         list(updates.values()) + [row['id']])
+    if not task_list:
+        print('  ✅ 目標日期都還沒到，無需補抓')
+        return
+
+    # 批次抓：同 stock+market+月份 只打一次 API
+    price_cache = {}  # (sid, market, ym) -> {date: price}
+    fetch_keys = set((t[3], t[4], t[5]) for t in task_list)
+    total_keys = len(fetch_keys)
+    print(f'  需打 API：{total_keys} 次（股票×月份組合）')
+
+    for i, (sid, mkt, ym) in enumerate(sorted(fetch_keys)):
+        prices = fetch_month_prices(sid, mkt, ym)
+        price_cache[(sid, mkt, ym)] = prices
+        if (i+1) % 10 == 0:
+            print(f'  API 進度：{i+1}/{total_keys}')
+        time.sleep(0.35)
+
+    # 回填
+    updated = 0
+    for (row_id, col, td, sid, mkt, ym) in task_list:
+        prices = price_cache.get((sid, mkt, ym), {})
+        price = prices.get(td)
+        if price:
+            conn.execute(f'UPDATE stock_daily SET {col}=? WHERE id=?', (price, row_id))
             updated += 1
 
-        if (idx + 1) % 10 == 0:
-            conn.commit()
-            print(f'  進度：{idx+1}/{len(df)}')
-
     conn.commit()
-    print(f'  ✅ 補抓完成，更新 {updated} 筆')
+    print(f'  ✅ 補抓完成，成功填入 {updated} 筆')
+
+# ══════════════════════════════════════════════════════════
+# 連續入選 / 新進榜 / 績效
+# ══════════════════════════════════════════════════════════
 
 def detect_consecutive(conn):
     print('\n[連續入選偵測]')
-    dates = pd.read_sql('SELECT DISTINCT date FROM stock_daily ORDER BY date DESC LIMIT 7', conn)['date'].tolist()
+    dates = pd.read_sql(
+        'SELECT DISTINCT date FROM stock_daily ORDER BY date DESC LIMIT 7', conn
+    )['date'].tolist()
     if not dates:
         return pd.DataFrame()
+    ph = ','.join(['?']*len(dates))
     df = pd.read_sql(f'''
         SELECT stock_id, name, market, date, composite_score
-        FROM stock_daily WHERE date IN ({",".join(["?"]*len(dates))})
+        FROM stock_daily WHERE date IN ({ph})
     ''', conn, params=dates)
     summary = df.groupby(['stock_id','name','market']).agg(
         appear_count=('date','count'),
@@ -192,12 +224,18 @@ def detect_consecutive(conn):
 
 def detect_new_entries(conn):
     print('\n[新進榜偵測]')
-    dates = pd.read_sql('SELECT DISTINCT date FROM stock_daily ORDER BY date DESC LIMIT 2', conn)['date'].tolist()
+    dates = pd.read_sql(
+        'SELECT DISTINCT date FROM stock_daily ORDER BY date DESC LIMIT 2', conn
+    )['date'].tolist()
     if len(dates) < 2:
         return pd.DataFrame()
     today_dt, yesterday_dt = dates[0], dates[1]
-    today_ids     = set(pd.read_sql('SELECT stock_id FROM stock_daily WHERE date=?', conn, params=[today_dt])['stock_id'])
-    yesterday_ids = set(pd.read_sql('SELECT stock_id FROM stock_daily WHERE date=?', conn, params=[yesterday_dt])['stock_id'])
+    today_ids = set(pd.read_sql(
+        'SELECT stock_id FROM stock_daily WHERE date=?', conn, params=[today_dt]
+    )['stock_id'])
+    yesterday_ids = set(pd.read_sql(
+        'SELECT stock_id FROM stock_daily WHERE date=?', conn, params=[yesterday_dt]
+    )['stock_id'])
     new_ids = today_ids - yesterday_ids
     if not new_ids:
         print('  今日無新進榜')
@@ -222,26 +260,27 @@ def calc_performance(conn):
     if df.empty:
         print('  ⚠️ 尚無 T+3 資料')
         return {}
-    df['ret_t1'] = (df['price_t1'] - df['entry_price']) / df['entry_price'] * 100
-    df['ret_t3'] = (df['price_t3'] - df['entry_price']) / df['entry_price'] * 100
-    df['ret_t5'] = (df['price_t5'] - df['entry_price']) / df['entry_price'] * 100
+    df['ret_t1'] = (df['price_t1']-df['entry_price'])/df['entry_price']*100
+    df['ret_t3'] = (df['price_t3']-df['entry_price'])/df['entry_price']*100
+    df['ret_t5'] = (df['price_t5']-df['entry_price'])/df['entry_price']*100
     df['cat'] = '強勢確認'
     df.loc[df['is_early_breakout'].str.upper()=='TRUE','cat'] = '起漲預警'
-    df.loc[(df['is_strong_confirm'].str.upper()=='TRUE')&(df['is_early_breakout'].str.upper()=='TRUE'),'cat'] = '綜合轉強'
+    df.loc[(df['is_strong_confirm'].str.upper()=='TRUE')&
+           (df['is_early_breakout'].str.upper()=='TRUE'),'cat'] = '綜合轉強'
     results = {}
     for cat in ['綜合轉強','強勢確認','起漲預警','全部']:
         sub = df if cat=='全部' else df[df['cat']==cat]
         if not len(sub): continue
         r = {'count':len(sub),
-             't1_win': round((sub['ret_t1']>0).mean()*100,1),
-             't1_avg': round(sub['ret_t1'].mean(),2),
-             't3_win': round((sub['ret_t3']>0).mean()*100,1),
-             't3_avg': round(sub['ret_t3'].mean(),2)}
+             't1_win':round((sub['ret_t1']>0).mean()*100,1),
+             't1_avg':round(sub['ret_t1'].mean(),2),
+             't3_win':round((sub['ret_t3']>0).mean()*100,1),
+             't3_avg':round(sub['ret_t3'].mean(),2)}
         if sub['ret_t5'].notna().any():
-            r['t5_win'] = round((sub['ret_t5']>0).mean()*100,1)
-            r['t5_avg'] = round(sub['ret_t5'].mean(),2)
-        results[cat] = r
-        print(f'  {cat}（{len(sub)}筆）T+3勝率={r["t3_win"]}% 均報={r["t3_avg"]}%')
+            r['t5_win']=round((sub['ret_t5']>0).mean()*100,1)
+            r['t5_avg']=round(sub['ret_t5'].mean(),2)
+        results[cat]=r
+        print(f'  {cat}（{len(sub)}筆）T+3={r["t3_win"]}% 均報={r["t3_avg"]}%')
     return results
 
 def main():
@@ -254,10 +293,12 @@ def main():
     new_df    = detect_new_entries(conn)
     perf      = calc_performance(conn)
     conn.close()
-    import pickle
     with open('data/analysis_cache.pkl','wb') as f:
-        pickle.dump({'consec':consec_df,'new_entries':new_df,
-                     'performance':perf,'generated':datetime.now().strftime('%Y-%m-%d %H:%M')}, f)
+        pickle.dump({
+            'consec':consec_df, 'new_entries':new_df,
+            'performance':perf,
+            'generated':datetime.now().strftime('%Y-%m-%d %H:%M')
+        }, f)
     print('\n✅ analyze 完成')
 
 if __name__ == '__main__':
