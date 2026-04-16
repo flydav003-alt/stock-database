@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>台股選股 Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d0d1a;color:#e2e8f0;font-family:'Segoe UI',sans-serif;font-size:14px;line-height:1.6}
+.header{background:linear-gradient(135deg,#1a1030,#0d1b2a);padding:28px 32px;border-bottom:1px solid #2d2d4e}
+.header h1{font-size:1.6em;font-weight:900;color:#c9b8ff;letter-spacing:2px}
+.header p{color:#7c7894;font-size:.85em;margin-top:6px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;padding:24px 32px;background:#11112a}
+.stat-card{background:#1a1a35;border:1px solid #2d2d4e;border-radius:10px;padding:18px;text-align:center}
+.stat-label{font-size:.72em;color:#7c7894;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-size:1.8em;font-weight:900}
+.stat-sub{font-size:.72em;color:#555;margin-top:4px}
+.sections{padding:24px 32px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:900px){.sections{grid-template-columns:1fr}}
+.section{background:#1a1a35;border:1px solid #2d2d4e;border-radius:12px;overflow:hidden}
+.section-header{background:#12122a;padding:16px 20px;border-bottom:1px solid #2d2d4e}
+.section-header h2{font-size:1em;font-weight:700;color:#c9b8ff}
+.section-header p{font-size:.78em;color:#7c7894;margin-top:3px}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;color:#7c7894;font-size:.75em;letter-spacing:.5px;border-bottom:1px solid #2d2d4e;white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid #1e1e38;font-size:.85em}
+tr:hover td{background:#1f1f40}
+.full-section{padding:0 32px 24px;}
+.full-block{background:#1a1a35;border:1px solid #2d2d4e;border-radius:12px;overflow:hidden;margin-bottom:24px}
+.footer{text-align:center;padding:24px;color:#555;font-size:.78em;border-top:1px solid #2d2d4e}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 台股選股 Dashboard</h1>
+  <p>TSE 上市 + OTC 上櫃 ｜ 資料更新：2026/04/16 09:21 ｜ 累積 1 個交易日</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">累積入選紀錄</div>
+    <div class="stat-value" style="color:#c9b8ff">75</div>
+    <div class="stat-sub">筆（1 個交易日）</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">T+3 勝率（全部）</div>
+    <div class="stat-value" style="color:#888">累積中</div>
+    <div class="stat-sub">0 筆有效樣本</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">T+3 平均報酬</div>
+    <div class="stat-value" style="color:#888">累積中</div>
+    <div class="stat-sub">入選日收盤為基準</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">今日新進榜</div>
+    <div class="stat-value" style="color:#facc15">0</div>
+    <div class="stat-sub">今日首次出現</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">今日入選總數</div>
+    <div class="stat-value" style="color:#fb923c">75</div>
+    <div class="stat-sub">2026-04-15</div>
+  </div>
+</div>
+
+<div class="sections">
+
+  <!-- 連續入選排行 -->
+  <div class="section">
+    <div class="section-header">
+      <h2>🔁 連續入選排行（近7日）</h2>
+      <p>在最近7個交易日內重複出現次數</p>
+    </div>
+    <table>
+      <tr>
+        <th>股票</th><th>出現次數</th><th>平均分</th><th>最高分</th><th>最近日期</th>
+      </tr>
+      <tr>
+                <td><b style="color:#c9b8ff">1503</b> 士電 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">25.9</td>
+                <td style="color:#fb923c">25.9</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">1519</b> 華城 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">25.4</td>
+                <td style="color:#fb923c">25.4</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">1605</b> 華新 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">46.5</td>
+                <td style="color:#fb923c">46.5</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">1785</b> 光洋科技 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">OTC</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">17.5</td>
+                <td style="color:#fb923c">17.5</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">2049</b> 上銀 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">26.1</td>
+                <td style="color:#fb923c">26.1</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">2312</b> 金寶 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">24.8</td>
+                <td style="color:#fb923c">24.8</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">2353</b> 宏碁 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">49.0</td>
+                <td style="color:#fb923c">49.0</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">2359</b> 所羅門 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">23.6</td>
+                <td style="color:#fb923c">23.6</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">2375</b> 凱美 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">23.8</td>
+                <td style="color:#fb923c">23.8</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">2376</b> 技嘉 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">56.6</td>
+                <td style="color:#fb923c">56.6</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">2454</b> 聯發科 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">20.5</td>
+                <td style="color:#fb923c">20.5</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">2498</b> 宏達電 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">24.0</td>
+                <td style="color:#fb923c">24.0</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">3016</b> 嘉晶 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">53.8</td>
+                <td style="color:#fb923c">53.8</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">3044</b> 健鼎 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">TSE</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">15.2</td>
+                <td style="color:#fb923c">15.2</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr><tr>
+                <td><b style="color:#c9b8ff">3081</b> 聯亞 <span style="background:#7c3aed;padding:1px 6px;border-radius:4px;font-size:.75em">OTC</span></td>
+                <td style="color:#facc15;font-weight:700">1 / 7</td>
+                <td style="color:#4ade80">15.6</td>
+                <td style="color:#fb923c">15.6</td>
+                <td style="color:#888;font-size:.85em">2026-04-15</td>
+            </tr>
+    </table>
+  </div>
+
+  <!-- 今日新進榜 -->
+  <div class="section">
+    <div class="section-header">
+      <h2>🆕 今日新進榜</h2>
+      <p>昨天沒有、今天首次出現</p>
+    </div>
+    <table>
+      <tr><th>股票</th><th>類型</th><th>收盤</th><th>綜合分</th></tr>
+      <tr><td colspan="4" style="color:#666;text-align:center">今日無新進榜（或資料累積中）</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="full-section">
+
+  <!-- 績效統計 -->
+  <div class="full-block">
+    <div class="section-header">
+      <h2>📈 模型績效統計（有效樣本：0 筆）</h2>
+      <p>T+1/T+3/T+5 以入選日收盤價為基準，需累積至少10個交易日才有意義</p>
+    </div>
+    <table>
+      <tr>
+        <th>分類</th>
+        <th>T+1勝率</th><th>T+1均報</th>
+        <th>T+3勝率</th><th>T+3均報</th>
+        <th>T+5勝率</th><th>T+5均報</th>
+        <th>樣本數</th>
+      </tr>
+      <tr><td>綜合轉強</td><td colspan="7" style="color:#666">資料不足</td></tr><tr><td>強勢確認</td><td colspan="7" style="color:#666">資料不足</td></tr><tr><td>起漲預警</td><td colspan="7" style="color:#666">資料不足</td></tr><tr><td>全部</td><td colspan="7" style="color:#666">資料不足</td></tr>
+    </table>
+  </div>
+
+  <!-- 每日統計 -->
+  <div class="full-block">
+    <div class="section-header">
+      <h2>📅 每日入選統計（最近7天）</h2>
+      <p>上市 / 上櫃 分開統計</p>
+    </div>
+    <table>
+      <tr><th>日期</th><th>合計</th><th>上市 TSE</th><th>上櫃 OTC</th></tr>
+      <tr>
+            <td style="color:#888">2026-04-15</td>
+            <td style="color:#fb923c;font-weight:700">75</td>
+            <td style="color:#60a5fa">22</td>
+            <td style="color:#a78bfa">53</td>
+        </tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  台股選股 Dashboard ｜ 資料來源：TWSE / TPEX / FinMind ｜ 僅供參考，不構成投資建議<br>
+  最後更新：2026/04/16 09:21
+</div>
+
+</body>
+</html>
