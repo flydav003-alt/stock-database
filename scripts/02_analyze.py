@@ -141,9 +141,9 @@ def fill_future_prices(conn):
     # 找出需要哪些月份的交易日曆
     needed_months = set()
     for _, row in df.iterrows():
-        entry = row['date'].replace('-', '')
-        # T+5 大概需要再往後 10 個日曆天，多抓一個月保險
+        entry = str(row['date']).replace('-', '')  # 統一轉成 YYYYMMDD
         d = datetime.strptime(entry, '%Y%m%d')
+        # T+5 大概需要再往後 10 個日曆天，多抓一個月保險
         for delta in range(0, 20):
             nd = d + timedelta(days=delta)
             needed_months.add(nd.strftime('%Y%m'))
@@ -158,7 +158,7 @@ def fill_future_prices(conn):
     for _, row in df.iterrows():
         sid    = str(row['stock_id'])
         market = str(row['market'])
-        entry  = str(row['date'])
+        entry  = str(row['date']).replace('-', '')  # 確保 YYYYMMDD 格式
 
         for n, col in [(1,'price_t1'), (3,'price_t3'), (5,'price_t5')]:
             if pd.isna(row[col]):
