@@ -1,0 +1,48 @@
+name: 每日資料處理 Pipeline
+
+on:
+  push:
+    paths:
+      - 'data/tse_*.csv'
+      - 'data/otc_*.csv'
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: 取出程式碼
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 設定 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 安裝套件
+        run: |
+          pip install --upgrade pip
+          pip install pandas requests
+
+      - name: Step 1：ingest CSV → DB
+        run: python scripts/01_ingest.py
+
+      - name: Step 2：analyze（連續入選 + 補抓T+1/3/5）
+        run: python scripts/02_analyze.py
+
+      - name: Step 3：產出 Dashboard HTML
+        run: python scripts/03_build_html.py
+
+      - name: Step 4：commit & push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/stock_history.db docs/index.html data/analysis_cache.pkl
+          git diff --staged --quiet || git commit -m "Daily pipeline $(date '+%Y%m%d %H:%M')"
+          git push
