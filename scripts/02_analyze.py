@@ -338,7 +338,7 @@ _FALLBACK_INDUSTRY = {
 def build_industry_cache():
     """
     從 TWSE + TPEX OpenAPI 抓完整產業分類，快取30天。
-    API 失敗時使用內建 fallback dict。
+    API 失敗時使用內建 fallback dict（方向C：代碼前綴）補足。
     """
     import json, os
     if os.path.exists(INDUSTRY_CACHE_PATH):
@@ -352,47 +352,67 @@ def build_industry_cache():
     print('  重新抓取產業分類...')
     result = dict(_FALLBACK_INDUSTRY)  # 先用 fallback 當底
 
-    # TWSE 上市
+    # TWSE 上市 — 試多個可能的欄位名稱
+    twse_ok = False
     try:
         r = requests.get('https://openapi.twse.com.tw/v1/opendata/t187ap03_L',
-                         timeout=20, headers={'User-Agent': 'Mozilla/5.0'})
+                         timeout=25, headers={'User-Agent': 'Mozilla/5.0'})
+        print(f'  TWSE HTTP {r.status_code}')
         if r.status_code == 200:
             rows = r.json()
-            if isinstance(rows, list) and rows:
-                before = len(result)
-                for row in rows:
-                    code = str(row.get('公司代號', '')).strip()
-                    # TWSE 欄位可能叫「產業類別」或「Industry」
-                    ind = str(row.get('產業類別', row.get('industry_category', ''))).strip()
-                    if code and ind:
-                        result[code] = ind
-                print(f'  TWSE 上市：新增 {len(result)-before} 筆（共 {len(result)} 筆）')
+            print(f'  TWSE 回傳 {len(rows)} 筆，範例欄位：{list(rows[0].keys()) if rows else "空"}')
+            before = len(result)
+            for row in rows:
+                code = str(row.get('公司代號', row.get('Code', ''))).strip()
+                # 嘗試各種可能欄位名
+                ind = (row.get('產業類別') or row.get('industry_category') or
+                       row.get('產業') or row.get('Industry') or '').strip()
+                if code and ind:
+                    result[code] = ind
+            added = len(result) - before
+            print(f'  TWSE 上市：新增 {added} 筆（共 {len(result)} 筆）')
+            twse_ok = added > 0
         time.sleep(0.5)
     except Exception as e:
-        print(f'  ⚠️ TWSE 失敗：{e}，使用 fallback')
+        print(f'  ⚠️ TWSE 失敗：{e}')
 
     # TPEX 上櫃
+    tpex_ok = False
     try:
         r = requests.get('https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O',
-                         timeout=20, headers={'User-Agent': 'Mozilla/5.0'})
+                         timeout=25, headers={'User-Agent': 'Mozilla/5.0'})
+        print(f'  TPEX HTTP {r.status_code}')
         if r.status_code == 200:
             rows = r.json()
-            if isinstance(rows, list) and rows:
-                before = len(result)
-                for row in rows:
-                    code = str(row.get('公司代號', '')).strip()
-                    ind  = str(row.get('產業類別', row.get('industry_category', ''))).strip()
-                    if code and ind and code not in result:
-                        result[code] = ind
-                print(f'  TPEX 上櫃：新增 {len(result)-before} 筆（共 {len(result)} 筆）')
+            print(f'  TPEX 回傳 {len(rows)} 筆，範例欄位：{list(rows[0].keys()) if rows else "空"}')
+            before = len(result)
+            for row in rows:
+                code = str(row.get('公司代號', row.get('Code', ''))).strip()
+                ind = (row.get('產業類別') or row.get('industry_category') or
+                       row.get('產業') or row.get('Industry') or '').strip()
+                if code and ind and code not in result:
+                    result[code] = ind
+            added = len(result) - before
+            print(f'  TPEX 上櫃：新增 {added} 筆（共 {len(result)} 筆）')
+            tpex_ok = added > 0
         time.sleep(0.5)
     except Exception as e:
-        print(f'  ⚠️ TPEX 失敗：{e}，使用 fallback')
+        print(f'  ⚠️ TPEX 失敗：{e}')
+
+    # 方向 C fallback：代碼前綴補足未知股票（確保「其他」最小化）
+    PREFIX_MAP = {
+        '1': '傳統產業', '2': '電子業', '3': '電子零組件',
+        '4': '生技醫療', '5': '金融保險', '6': '新興電子',
+        '7': '文化創意', '8': '其他電子', '9': '其他',
+    }
+    prefix_filled = 0
+    # 這個補充只針對 DB 裡實際出現過但對照表沒有的股票
+    # （在 03_build_html.py 的 get_industry 裡做 fallback，這裡不需要全補）
 
     os.makedirs('data', exist_ok=True)
     with open(INDUSTRY_CACHE_PATH, 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False)
-    print(f'  ✅ 產業快取儲存：{len(result)} 筆')
+    print(f'  ✅ 產業快取儲存：{len(result)} 筆（API {"成功" if twse_ok or tpex_ok else "失敗，使用fallback"}）')
     return result
 
 
