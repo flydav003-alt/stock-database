@@ -91,8 +91,12 @@ def get_all_data(conn, imap):
         strength[key] = [{'stock_id':r[0],'name':r[1],'market':r[2],'cnt':r[3],'avg':round(r[4],1),'max':round(r[5],1)} for r in rows]
 
     # 績效
-    perf_rows = conn.execute('SELECT close,price_t1,price_t3,price_t5,is_strong_confirm,is_early_breakout FROM stock_daily WHERE price_t3 IS NOT NULL').fetchall()
+    perf_rows = conn.execute(
+        'SELECT close,price_t1,price_t3,price_t5,is_strong_confirm,is_early_breakout,market FROM stock_daily WHERE price_t3 IS NOT NULL'
+    ).fetchall()
     perf = {}
+    perf_tse = {}
+    perf_otc = {}
     if perf_rows:
         def cp(subset):
             if not subset: return None
@@ -102,14 +106,16 @@ def get_all_data(conn, imap):
             def wr(lst): return round(sum(1 for x in lst if x>0)/len(lst)*100,1) if lst else None
             def av(lst): return round(sum(lst)/len(lst),2) if lst else None
             return {'count':len(subset),'t1_win':wr(r1),'t1_avg':av(r1),'t3_win':wr(r3),'t3_avg':av(r3),'t5_win':wr(r5),'t5_avg':av(r5)}
-        # 綜合轉強：兩個都 TRUE
-        combo  = [r for r in perf_rows if str(r[4]).upper()=='TRUE' and str(r[5]).upper()=='TRUE']
-        # 強勢確認：strong=TRUE 的全部（包含同時是綜合的）
-        strong = [r for r in perf_rows if str(r[4]).upper()=='TRUE']
-        # 起漲預警：early=TRUE 的全部（包含同時是綜合的）
-        early  = [r for r in perf_rows if str(r[5]).upper()=='TRUE']
-        # 注意：strong/early 故意允許重疊，才能看出各訊號真實勝率
-        perf = {'綜合轉強':cp(combo),'強勢確認':cp(strong),'起漲預警':cp(early),'全部':cp(perf_rows)}
+        def calc_perf_for(rows):
+            combo  = [r for r in rows if str(r[4]).upper()=='TRUE' and str(r[5]).upper()=='TRUE']
+            strong = [r for r in rows if str(r[4]).upper()=='TRUE']
+            early  = [r for r in rows if str(r[5]).upper()=='TRUE']
+            return {'綜合轉強':cp(combo),'強勢確認':cp(strong),'起漲預警':cp(early),'全部':cp(rows)}
+        perf     = calc_perf_for(perf_rows)
+        tse_rows = [r for r in perf_rows if r[6]=='TSE']
+        otc_rows = [r for r in perf_rows if r[6]=='OTC']
+        perf_tse = calc_perf_for(tse_rows)
+        perf_otc = calc_perf_for(otc_rows)
 
     # 黑名單
     blacklist = []
@@ -182,11 +188,11 @@ def get_all_data(conn, imap):
 
     return {
         'today':today,'yesterday':yesterday,'today_list':today_list,'new_ids':new_ids,
-        'streak_list':streak_list,'strength':strength,'perf':perf,'blacklist':blacklist,
+        'streak_list':streak_list,'strength':strength,'perf':perf,'perf_tse':perf_tse,'perf_otc':perf_otc,'blacklist':blacklist,
         'stock_history':stock_history,'industry_heat':industry_heat,'daily_list':daily_list,
         'total_records':conn.execute('SELECT COUNT(*) FROM stock_daily').fetchone()[0],
         'trade_days':conn.execute('SELECT COUNT(DISTINCT date) FROM stock_daily').fetchone()[0],
-        't3_sample':len(perf_rows),
+        't3_sample':len(perf_rows),'t3_sample_tse':len([r for r in perf_rows if r[6]=='TSE']),'t3_sample_otc':len([r for r in perf_rows if r[6]=='OTC']),
     }
 
 def fmt_pct(v, d=1):
@@ -284,10 +290,16 @@ def build_html(d):
         </div>'''
 
     # ── 績效 ──
-    phtml  = perf_row('綜合轉強', d['perf'].get('綜合轉強'), '#c4572a')
-    phtml += perf_row('強勢確認', d['perf'].get('強勢確認'), '#5a9e6f')
-    phtml += perf_row('起漲預警', d['perf'].get('起漲預警'), '#b07d2a')
-    phtml += perf_row('全部合計', d['perf'].get('全部'), '#5a5048')
+    # TSE 表
+    phtml_tse  = perf_row('綜合轉強', d['perf_tse'].get('綜合轉強'), '#c4572a')
+    phtml_tse += perf_row('強勢確認', d['perf_tse'].get('強勢確認'), '#5a9e6f')
+    phtml_tse += perf_row('起漲預警', d['perf_tse'].get('起漲預警'), '#b07d2a')
+    phtml_tse += perf_row('全部合計', d['perf_tse'].get('全部'), '#5a5048')
+    # OTC 表
+    phtml_otc  = perf_row('綜合轉強', d['perf_otc'].get('綜合轉強'), '#c4572a')
+    phtml_otc += perf_row('強勢確認', d['perf_otc'].get('強勢確認'), '#5a9e6f')
+    phtml_otc += perf_row('起漲預警', d['perf_otc'].get('起漲預警'), '#b07d2a')
+    phtml_otc += perf_row('全部合計', d['perf_otc'].get('全部'), '#5a5048')
 
     # ── 產業熱度 ──
     max_ind = max((x['today'] for x in d['industry_heat']), default=1)
@@ -445,6 +457,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 
 /* ── 下方四格 ── */
 .bot-grid{{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-top:1px solid var(--border);}}
+.bot-col[style*="span 2"]{{grid-column:span 2;}}
 .bot-col{{border-right:1px solid var(--border);}}
 .bot-col:last-child{{border-right:none;}}
 
@@ -597,12 +610,31 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   </div>
 
   <div class="bot-grid">
-    <div class="bot-col">
-      <div class="panel-hd"><div class="ph-t">模型績效統計</div><div class="ph-b on">{d['t3_sample']} 筆</div></div>
-      <table class="pt">
-        <thead><tr><th>分類</th><th>T+1勝率</th><th>T+1均報</th><th>T+3勝率</th><th>T+3均報</th><th>T+5勝率</th><th>T+5均報</th><th>N</th></tr></thead>
-        <tbody>{phtml}</tbody>
-      </table>
+    <div class="bot-col" style="grid-column:span 2;">
+      <div class="panel-hd">
+        <div class="ph-t">模型績效統計</div>
+        <div class="ph-b on">{d['t3_sample']} 筆有效樣本</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border-top:none;">
+        <div style="border-right:1px solid var(--border);">
+          <div style="padding:6px 14px;font-size:9px;letter-spacing:2px;color:var(--ink2);background:var(--bg2);border-bottom:1px solid var(--border);">
+            上市 TSE &nbsp;<span style="color:var(--ink4);font-size:9px;">{d['t3_sample_tse']} 筆</span>
+          </div>
+          <table class="pt">
+            <thead><tr><th>分類</th><th>T+1勝</th><th>T+1均</th><th>T+3勝</th><th>T+3均</th><th>T+5勝</th><th>T+5均</th><th>N</th></tr></thead>
+            <tbody>{phtml_tse}</tbody>
+          </table>
+        </div>
+        <div>
+          <div style="padding:6px 14px;font-size:9px;letter-spacing:2px;color:var(--ink2);background:var(--bg2);border-bottom:1px solid var(--border);">
+            上櫃 OTC &nbsp;<span style="color:var(--ink4);font-size:9px;">{d['t3_sample_otc']} 筆</span>
+          </div>
+          <table class="pt">
+            <thead><tr><th>分類</th><th>T+1勝</th><th>T+1均</th><th>T+3勝</th><th>T+3均</th><th>T+5勝</th><th>T+5均</th><th>N</th></tr></thead>
+            <tbody>{phtml_otc}</tbody>
+          </table>
+        </div>
+      </div>
     </div>
     <div class="bot-col">
       <div class="panel-hd"><div class="ph-t">產業熱度</div><div class="ph-b">今日 vs 昨日</div></div>
