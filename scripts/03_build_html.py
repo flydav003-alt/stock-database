@@ -24,8 +24,20 @@ def load_industry_map():
         except: pass
     return {}
 
+# 代碼前綴 fallback（API 和 fallback dict 都找不到時用）
+_PREFIX_INDUSTRY = {
+    '1': '傳統產業', '2': '電子業', '3': '電子零組件',
+    '4': '生技醫療', '5': '金融保險', '6': '新興電子',
+    '7': '文化創意', '8': '其他電子', '9': '其他',
+}
+
 def get_industry(sid, imap):
-    return imap.get(str(sid), '其他')
+    sid = str(sid)
+    if sid in imap:
+        return imap[sid]
+    # 代碼前綴 fallback
+    prefix = sid[0] if sid else ''
+    return _PREFIX_INDUSTRY.get(prefix, '其他')
 
 def get_all_data(conn, imap):
     today = conn.execute('SELECT MAX(date) FROM stock_daily').fetchone()[0] or ''
@@ -90,10 +102,13 @@ def get_all_data(conn, imap):
             def wr(lst): return round(sum(1 for x in lst if x>0)/len(lst)*100,1) if lst else None
             def av(lst): return round(sum(lst)/len(lst),2) if lst else None
             return {'count':len(subset),'t1_win':wr(r1),'t1_avg':av(r1),'t3_win':wr(r3),'t3_avg':av(r3),'t5_win':wr(r5),'t5_avg':av(r5)}
+        # 綜合轉強：兩個都 TRUE
         combo  = [r for r in perf_rows if str(r[4]).upper()=='TRUE' and str(r[5]).upper()=='TRUE']
-        strong = [r for r in perf_rows if str(r[4]).upper()=='TRUE' and str(r[5]).upper()!='TRUE']
-        early  = [r for r in perf_rows if str(r[4]).upper()!='TRUE' and str(r[5]).upper()=='TRUE']
-        # 兩個都FALSE的排除（不應出現，cleanup後無此問題）
+        # 強勢確認：strong=TRUE 的全部（包含同時是綜合的）
+        strong = [r for r in perf_rows if str(r[4]).upper()=='TRUE']
+        # 起漲預警：early=TRUE 的全部（包含同時是綜合的）
+        early  = [r for r in perf_rows if str(r[5]).upper()=='TRUE']
+        # 注意：strong/early 故意允許重疊，才能看出各訊號真實勝率
         perf = {'綜合轉強':cp(combo),'強勢確認':cp(strong),'起漲預警':cp(early),'全部':cp(perf_rows)}
 
     # 黑名單
