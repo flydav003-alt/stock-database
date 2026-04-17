@@ -82,26 +82,47 @@ def fetch_month_prices_tpex(stock_id, ym):
     """抓上櫃股某月全部收盤價，回傳 {YYYYMMDD: float}"""
     yr_tw = int(ym[:4]) - 1911
     mm = ym[4:]
-    url = (f'https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/'
-           f'st43_result.php?l=zh-tw&d={yr_tw}/{mm}/01&s={stock_id}')
-    try:
-        r = requests.get(url, timeout=15, headers={'User-Agent': 'Mozilla/5.0'})
-        j = r.json()
-        if not j.get('aaData'):
-            return {}
-        result = {}
-        for row in j['aaData']:
-            parts = str(row[0]).strip().split('/')
-            if len(parts) == 3:
-                yr = int(parts[0]) + 1911
-                key = f'{yr}{parts[1].zfill(2)}{parts[2].zfill(2)}'
-                val = str(row[6]).replace(',', '').strip()
-                if val not in ('--', ''):
-                    try: result[key] = float(val)
-                    except: pass
-        return result
-    except:
-        return {}
+
+    # 嘗試多個 TPEX endpoint
+    urls = [
+        (f'https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/'
+         f'st43_result.php?l=zh-tw&d={yr_tw}/{mm}/01&s={stock_id}', 'aaData'),
+        (f'https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/'
+         f'st43_result.php?l=zh-tw&d={yr_tw}/{mm}/15&s={stock_id}', 'aaData'),
+    ]
+
+    for url, data_key in urls:
+        for attempt in range(2):  # 每個 URL 最多試 2 次
+            try:
+                r = requests.get(url, timeout=20, headers={
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    'Accept': 'application/json, text/javascript, */*',
+                    'Referer': 'https://www.tpex.org.tw/',
+                })
+                if r.status_code != 200:
+                    time.sleep(1)
+                    continue
+                j = r.json()
+                rows = j.get(data_key, [])
+                if not rows:
+                    break  # 這個 URL 真的沒資料，試下一個
+                result = {}
+                for row in rows:
+                    parts = str(row[0]).strip().split('/')
+                    if len(parts) == 3:
+                        yr = int(parts[0]) + 1911
+                        key = f'{yr}{parts[1].zfill(2)}{parts[2].zfill(2)}'
+                        val = str(row[6]).replace(',', '').strip()
+                        if val not in ('--', '', 'X'):
+                            try: result[key] = float(val)
+                            except: pass
+                if result:
+                    return result
+            except Exception:
+                time.sleep(1)
+        time.sleep(0.3)
+
+    return {}
 
 def fetch_month_prices(stock_id, market, ym):
     if market == 'TSE':
@@ -181,16 +202,31 @@ def fill_future_prices(conn):
             print(f'  API 進度：{i+1}/{total_keys}')
         time.sleep(0.35)
 
-    # 回填
+    # 回填 + 詳細診斷
     updated = 0
+    miss_tpex = 0
+    miss_twse = 0
     for (row_id, col, td, sid, mkt, ym) in task_list:
         prices = price_cache.get((sid, mkt, ym), {})
         price = prices.get(td)
         if price:
             conn.execute(f'UPDATE stock_daily SET {col}=? WHERE id=?', (price, row_id))
             updated += 1
+        else:
+            # 診斷：price_cache 有這個 key 但找不到日期
+            cache_size = len(prices)
+            if mkt == 'OTC':
+                miss_tpex += 1
+                if miss_tpex <= 3:  # 只印前3筆避免 log 太長
+                    print(f'  ⚠️ OTC {sid} {td} 找不到價格（cache有{cache_size}筆）')
+            else:
+                miss_twse += 1
 
     conn.commit()
+    if miss_tpex > 0:
+        print(f'  ⚠️ OTC 找不到價格共 {miss_tpex} 筆（TPEX API 可能被限流）')
+    if miss_twse > 0:
+        print(f'  ⚠️ TSE 找不到價格共 {miss_twse} 筆')
     print(f'  ✅ 補抓完成，成功填入 {updated} 筆')
 
 # ══════════════════════════════════════════════════════════
@@ -338,7 +374,7 @@ _FALLBACK_INDUSTRY = {
 def build_industry_cache():
     """
     從 TWSE + TPEX OpenAPI 抓完整產業分類，快取30天。
-    API 失敗時使用內建 fallback dict（方向C：代碼前綴）補足。
+    API 失敗時使用內建 fallback dict。
     """
     import json, os
     if os.path.exists(INDUSTRY_CACHE_PATH):
@@ -352,67 +388,47 @@ def build_industry_cache():
     print('  重新抓取產業分類...')
     result = dict(_FALLBACK_INDUSTRY)  # 先用 fallback 當底
 
-    # TWSE 上市 — 試多個可能的欄位名稱
-    twse_ok = False
+    # TWSE 上市
     try:
         r = requests.get('https://openapi.twse.com.tw/v1/opendata/t187ap03_L',
-                         timeout=25, headers={'User-Agent': 'Mozilla/5.0'})
-        print(f'  TWSE HTTP {r.status_code}')
+                         timeout=20, headers={'User-Agent': 'Mozilla/5.0'})
         if r.status_code == 200:
             rows = r.json()
-            print(f'  TWSE 回傳 {len(rows)} 筆，範例欄位：{list(rows[0].keys()) if rows else "空"}')
-            before = len(result)
-            for row in rows:
-                code = str(row.get('公司代號', row.get('Code', ''))).strip()
-                # 嘗試各種可能欄位名
-                ind = (row.get('產業類別') or row.get('industry_category') or
-                       row.get('產業') or row.get('Industry') or '').strip()
-                if code and ind:
-                    result[code] = ind
-            added = len(result) - before
-            print(f'  TWSE 上市：新增 {added} 筆（共 {len(result)} 筆）')
-            twse_ok = added > 0
+            if isinstance(rows, list) and rows:
+                before = len(result)
+                for row in rows:
+                    code = str(row.get('公司代號', '')).strip()
+                    # TWSE 欄位可能叫「產業類別」或「Industry」
+                    ind = str(row.get('產業類別', row.get('industry_category', ''))).strip()
+                    if code and ind:
+                        result[code] = ind
+                print(f'  TWSE 上市：新增 {len(result)-before} 筆（共 {len(result)} 筆）')
         time.sleep(0.5)
     except Exception as e:
-        print(f'  ⚠️ TWSE 失敗：{e}')
+        print(f'  ⚠️ TWSE 失敗：{e}，使用 fallback')
 
     # TPEX 上櫃
-    tpex_ok = False
     try:
         r = requests.get('https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O',
-                         timeout=25, headers={'User-Agent': 'Mozilla/5.0'})
-        print(f'  TPEX HTTP {r.status_code}')
+                         timeout=20, headers={'User-Agent': 'Mozilla/5.0'})
         if r.status_code == 200:
             rows = r.json()
-            print(f'  TPEX 回傳 {len(rows)} 筆，範例欄位：{list(rows[0].keys()) if rows else "空"}')
-            before = len(result)
-            for row in rows:
-                code = str(row.get('公司代號', row.get('Code', ''))).strip()
-                ind = (row.get('產業類別') or row.get('industry_category') or
-                       row.get('產業') or row.get('Industry') or '').strip()
-                if code and ind and code not in result:
-                    result[code] = ind
-            added = len(result) - before
-            print(f'  TPEX 上櫃：新增 {added} 筆（共 {len(result)} 筆）')
-            tpex_ok = added > 0
+            if isinstance(rows, list) and rows:
+                before = len(result)
+                for row in rows:
+                    code = str(row.get('公司代號', '')).strip()
+                    ind  = str(row.get('產業類別', row.get('industry_category', ''))).strip()
+                    if code and ind and code not in result:
+                        result[code] = ind
+                print(f'  TPEX 上櫃：新增 {len(result)-before} 筆（共 {len(result)} 筆）')
         time.sleep(0.5)
     except Exception as e:
-        print(f'  ⚠️ TPEX 失敗：{e}')
-
-    # 方向 C fallback：代碼前綴補足未知股票（確保「其他」最小化）
-    PREFIX_MAP = {
-        '1': '傳統產業', '2': '電子業', '3': '電子零組件',
-        '4': '生技醫療', '5': '金融保險', '6': '新興電子',
-        '7': '文化創意', '8': '其他電子', '9': '其他',
-    }
-    prefix_filled = 0
-    # 這個補充只針對 DB 裡實際出現過但對照表沒有的股票
-    # （在 03_build_html.py 的 get_industry 裡做 fallback，這裡不需要全補）
+        print(f'  ⚠️ TPEX 失敗：{e}，使用 fallback')
 
     os.makedirs('data', exist_ok=True)
     with open(INDUSTRY_CACHE_PATH, 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False)
-    print(f'  ✅ 產業快取儲存：{len(result)} 筆（API {"成功" if twse_ok or tpex_ok else "失敗，使用fallback"}）')
+    print(f'  ✅ 產業快取儲存：{len(result)} 筆')
     return result
 
 
