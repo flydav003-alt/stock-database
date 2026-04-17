@@ -7,6 +7,7 @@
 3. 同一檔股票同一個月只打一次 API
 """
 import sqlite3
+import os
 import requests
 import pandas as pd
 import time
@@ -79,58 +80,90 @@ def fetch_month_prices_twse(stock_id, ym):
         return {}
 
 def fetch_month_prices_tpex(stock_id, ym):
-    """抓上櫃股某月全部收盤價，回傳 {YYYYMMDD: float}"""
-    yr_tw = int(ym[:4]) - 1911
-    mm = ym[4:]
-
-    # 嘗試多個 TPEX endpoint
-    urls = [
-        (f'https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/'
-         f'st43_result.php?l=zh-tw&d={yr_tw}/{mm}/01&s={stock_id}', 'aaData'),
-        (f'https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/'
-         f'st43_result.php?l=zh-tw&d={yr_tw}/{mm}/15&s={stock_id}', 'aaData'),
-    ]
-
-    for url, data_key in urls:
-        for attempt in range(2):  # 每個 URL 最多試 2 次
-            try:
-                r = requests.get(url, timeout=20, headers={
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    'Accept': 'application/json, text/javascript, */*',
-                    'Referer': 'https://www.tpex.org.tw/',
-                })
-                if r.status_code != 200:
-                    time.sleep(1)
-                    continue
-                j = r.json()
-                rows = j.get(data_key, [])
-                if not rows:
-                    break  # 這個 URL 真的沒資料，試下一個
+    """
+    抓上櫃股某月全部收盤價，回傳 {YYYYMMDD: float}
+    優先用 FinMind API（在 GitHub Actions 環境穩定），
+    失敗才 fallback 到 TPEX 網站
+    """
+    # ── 方案 A：FinMind API ──
+    token = os.environ.get('FINMIND_TOKEN', '')
+    if token:
+        try:
+            yr = ym[:4]
+            mm = ym[4:]
+            import calendar
+            _, last_day = calendar.monthrange(int(yr), int(mm))
+            start = f'{yr}-{mm}-01'
+            end   = f'{yr}-{mm}-{last_day:02d}'
+            r = requests.get('https://api.finmindtrade.com/api/v4/data', params={
+                'dataset': 'TaiwanStockPrice',
+                'data_id': stock_id,
+                'token': token,
+                'start_date': start,
+                'end_date': end,
+            }, timeout=20)
+            j = r.json()
+            if j.get('status') == 200 and j.get('data'):
                 result = {}
-                for row in rows:
-                    parts = str(row[0]).strip().split('/')
-                    if len(parts) == 3:
-                        yr = int(parts[0]) + 1911
-                        key = f'{yr}{parts[1].zfill(2)}{parts[2].zfill(2)}'
-                        val = str(row[6]).replace(',', '').strip()
-                        if val not in ('--', '', 'X'):
-                            try: result[key] = float(val)
-                            except: pass
+                for row in j['data']:
+                    dt = str(row.get('date', '')).replace('-', '')
+                    cl = row.get('close')
+                    if dt and cl:
+                        try: result[dt] = float(cl)
+                        except: pass
                 if result:
                     return result
-            except Exception:
-                time.sleep(1)
-        time.sleep(0.3)
+        except Exception:
+            pass
+
+    # ── 方案 B：TPEX 網站（fallback）──
+    yr_tw = int(ym[:4]) - 1911
+    mm = ym[4:]
+    url = (f'https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/'
+           f'st43_result.php?l=zh-tw&d={yr_tw}/{mm}/01&s={stock_id}')
+    try:
+        r = requests.get(url, timeout=20, headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+            'Accept': 'application/json, text/javascript, */*',
+            'Referer': 'https://www.tpex.org.tw/',
+        })
+        if r.status_code == 200:
+            j = r.json()
+            rows = j.get('aaData', [])
+            result = {}
+            for row in rows:
+                parts = str(row[0]).strip().split('/')
+                if len(parts) == 3:
+                    yr2 = int(parts[0]) + 1911
+                    key = f'{yr2}{parts[1].zfill(2)}{parts[2].zfill(2)}'
+                    val = str(row[6]).replace(',', '').strip()
+                    if val not in ('--', '', 'X'):
+                        try: result[key] = float(val)
+                        except: pass
+            if result:
+                return result
+    except Exception:
+        pass
 
     return {}
 
 def fetch_month_prices(stock_id, market, ym):
+    """
+    TSE：先 TWSE 網站，失敗用 FinMind
+    OTC：先 FinMind（穩定），失敗用 TPEX 網站
+    """
     if market == 'TSE':
         p = fetch_month_prices_twse(stock_id, ym)
-        return p if p else fetch_month_prices_tpex(stock_id, ym)
+        if p: return p
+        # TSE fallback 也試 FinMind
+        token = os.environ.get('FINMIND_TOKEN', '')
+        if token:
+            p2 = fetch_month_prices_tpex(stock_id, ym)  # FinMind 支援 TSE
+            if p2: return p2
+        return {}
     else:
-        p = fetch_month_prices_tpex(stock_id, ym)
-        return p if p else fetch_month_prices_twse(stock_id, ym)
+        # OTC：FinMind 優先（在 fetch_month_prices_tpex 裡）
+        return fetch_month_prices_tpex(stock_id, ym)
 
 # ══════════════════════════════════════════════════════════
 # 主函數：補抓 T+1/T+3/T+5
