@@ -33,6 +33,8 @@ jobs:
         run: python scripts/01_ingest.py
 
       - name: Step 2：analyze（連續入選 + 補抓T+1/3/5）
+        env:
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
         run: python scripts/02_analyze.py
 
       - name: Step 3：產出 Dashboard HTML
@@ -42,7 +44,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/stock_history.db docs/index.html data/analysis_cache.pkl
+          git add data/stock_history.db docs/index.html data/analysis_cache.pkl data/industry_map.json
           git diff --staged --quiet || git commit -m "Daily pipeline $(date '+%Y%m%d %H:%M')"
           for i in 1 2 3; do
             git pull --rebase origin main && git push && echo "✅ Push 成功" && break
