@@ -355,11 +355,11 @@ def build_html(d):
 :root{{
   --bg:#1c1510;--bg2:#221810;--bg3:#2d2318;
   --card:#1f1913;--card2:#251d16;
-  --ink:#e8d9bc;--ink2:#c4a06e;--ink3:rgba(232,217,188,.5);--ink4:rgba(232,217,188,.22);
+  --ink:#e8d9bc;--ink2:#c4a06e;--ink3:rgba(232,217,188,.65);--ink4:rgba(232,217,188,.45);--ink5:rgba(232,217,188,.22);
   --red:#c4572a;--red2:#2a1a0f;
   --grn:#5a9e6f;--grn2:#1a2f20;
   --amb:#b07d2a;--amb2:#2a1f0a;
-  --border:rgba(232,217,188,.08);--border2:rgba(232,217,188,.05);
+  --border:rgba(232,217,188,.12);--border2:rgba(232,217,188,.07);
 }}
 body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}}
 
@@ -371,17 +371,17 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .nav-btn:hover{{color:rgba(232,217,188,.8);}}
 .nav-btn.on{{color:var(--ink2);border-bottom-color:var(--red);}}
 .hdr-right{{display:flex;align-items:center;gap:12px;margin-left:auto;}}
-.live-ind{{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:2px;}}
+.live-ind{{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);letter-spacing:2px;}}
 .live-dot{{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:bk 2s ease-in-out infinite;}}
 @keyframes bk{{0%,100%{{opacity:1}}50%{{opacity:.2}}}}
-.hdr-date{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);letter-spacing:1px;}}
+.hdr-date{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:1px;}}
 
 .hero{{background:#150f0a;display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border);}}
 .hkpi{{padding:18px 22px;border-right:1px solid var(--border);}}
 .hkpi:last-child{{border-right:none;}}
 .hkpi-n{{font-family:'Fraunces',serif;font-weight:700;font-size:40px;color:var(--ink);line-height:1;letter-spacing:-2px;}}
-.hkpi-l{{font-size:8px;letter-spacing:3px;color:var(--ink4);margin-top:7px;text-transform:uppercase;}}
-.hkpi-s{{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);margin-top:3px;}}
+.hkpi-l{{font-size:9px;letter-spacing:2px;color:var(--ink3);margin-top:7px;text-transform:uppercase;}}
+.hkpi-s{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);margin-top:3px;}}
 
 .a-alert{{background:var(--amb2);border-bottom:1px solid rgba(176,125,42,.18);padding:7px 28px;display:flex;align-items:center;gap:10px;font-size:10px;color:var(--amb);}}
 .a-alert-dot{{width:5px;height:5px;border-radius:50%;background:var(--amb);flex-shrink:0;animation:bk 1.5s ease-in-out infinite;}}
@@ -396,7 +396,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .col:last-child{{border-right:none;}}
 
 .panel-hd{{padding:11px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--card);}}
-.ph-t{{font-size:9px;letter-spacing:2px;color:var(--ink3);text-transform:uppercase;}}
+.ph-t{{font-size:10px;letter-spacing:1px;color:var(--ink);text-transform:uppercase;font-weight:500;}}
 .ph-b{{margin-left:auto;font-family:'DM Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid var(--border);color:var(--ink4);}}
 .ph-b.on{{border-color:var(--red);color:var(--red);}}
 .ph-b.warn{{border-color:var(--amb);color:var(--amb);}}
@@ -413,7 +413,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .ne-name{{font-size:11px;color:var(--ink2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}}
 .ne-right{{text-align:right;flex-shrink:0;}}
 .ne-score{{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--ink);}}
-.ne-type{{font-size:9px;color:var(--ink4);letter-spacing:.5px;}}
+.ne-type{{font-size:10px;color:var(--ink3);letter-spacing:.5px;}}
 .more-hint{{padding:8px 16px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:1px;background:var(--bg2);}}
 
 /* ── 連續入選 ── */
@@ -424,7 +424,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .st-code{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink2);}}
 .st-info{{min-width:0;}}
 .st-name{{font-size:11px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}}
-.st-sub{{font-size:9px;color:var(--ink2);margin-top:1px;}}
+.st-sub{{font-size:10px;color:var(--ink3);margin-top:1px;}}
 .st-days{{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;text-align:right;}}
 .hot-tag{{font-size:8px;padding:1px 4px;background:rgba(176,125,42,.15);color:var(--amb);border:1px solid rgba(176,125,42,.25);margin-left:4px;vertical-align:middle;}}
 
@@ -439,7 +439,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .sw-item{{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--border2);cursor:pointer;transition:.15s;}}
 .sw-item:hover{{background:var(--bg2);}}
 .sw-code{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink2);width:40px;flex-shrink:0;}}
-.sw-name{{flex:1;font-size:11px;color:var(--ink2);}}
+.sw-name{{flex:1;font-size:12px;color:var(--ink);}}
 .sw-mkt{{font-size:8px;color:var(--ink4);padding:1px 4px;border:1px solid var(--border);}}
 .sw-score{{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);}}
 
@@ -450,28 +450,28 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 
 /* ── 績效表 ── */
 .pt{{width:100%;border-collapse:collapse;}}
-.pt th{{padding:7px 12px;font-size:7px;letter-spacing:2px;color:var(--ink4);text-transform:uppercase;border-bottom:1px solid var(--border2);text-align:center;background:var(--bg);}}
+.pt th{{padding:7px 12px;font-size:9px;letter-spacing:1px;color:var(--ink3);text-transform:uppercase;border-bottom:1px solid var(--border2);text-align:center;background:var(--bg);}}
 .pt th:first-child{{text-align:left;}}
 .pt td{{padding:8px 12px;border-bottom:1px solid var(--border2);font-size:10px;vertical-align:middle;}}
 .pt tr:last-child td{{border-bottom:none;}}
 .pt tr:hover td{{background:var(--bg2);}}
-.pt-cat{{display:flex;align-items:center;gap:5px;color:rgba(232,217,188,.55);font-size:10px;}}
+.pt-cat{{display:flex;align-items:center;gap:5px;color:var(--ink);font-size:11px;}}
 .pt-sq{{width:3px;height:11px;flex-shrink:0;}}
 .win-wrap{{display:flex;align-items:center;gap:4px;justify-content:center;}}
 .win-track{{width:24px;height:2px;background:var(--bg3);}}
 .win-fill{{height:2px;}}
 .wn{{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;min-width:34px;text-align:right;}}
 .av{{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-align:center;}}
-.sn{{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);text-align:center;}}
-.nd-cell{{color:var(--ink4);font-size:9px;text-align:center;}}
+.sn{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);text-align:center;}}
+.nd-cell{{color:var(--ink3);font-size:10px;text-align:center;}}
 
 /* ── 產業熱度 ── */
 .ind-row{{display:flex;align-items:center;gap:6px;padding:7px 14px;border-bottom:1px solid var(--border2);}}
 .ind-row:last-child{{border-bottom:none;}}
-.ind-name{{font-size:10px;color:var(--ink3);width:80px;flex-shrink:0;}}
+.ind-name{{font-size:11px;color:var(--ink);width:80px;flex-shrink:0;}}
 .ind-track{{flex:1;height:2px;background:var(--bg3);}}
 .ind-fill{{height:2px;}}
-.ind-c{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);width:20px;text-align:right;}}
+.ind-c{{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink);width:20px;text-align:right;}}
 .ind-d{{font-family:'DM Mono',monospace;font-size:10px;width:22px;text-align:right;}}
 
 /* ── 黑名單 ── */
@@ -503,7 +503,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .sr-code{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink2);}}
 .sr-name{{font-size:11px;color:var(--ink);}}
 .sr-mkt{{font-size:8px;color:var(--ink4);padding:1px 4px;border:1px solid var(--border);margin-left:5px;}}
-.sr-cnt{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);text-align:center;}}
+.sr-cnt{{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink);text-align:center;}}
 .sr-avg{{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--ink2);text-align:right;}}
 
 /* ── Star ── */
@@ -516,16 +516,17 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .modal{{background:var(--bg);border:1px solid var(--border);width:680px;max-width:96vw;max-height:82vh;overflow-y:auto;margin-bottom:40px;}}
 .modal-hdr{{background:#150f0a;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}}
 .modal-title{{font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:var(--ink);}}
-.modal-sub{{font-size:10px;color:var(--ink4);margin-top:2px;font-family:'DM Mono',monospace;}}
+.modal-title a{{font-family:'Fraunces',serif;font-size:19px;font-weight:700;}}
+.modal-sub{{font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Mono',monospace;}}
 .modal-close{{font-size:18px;color:var(--ink4);cursor:pointer;padding:4px 8px;}}
 .modal-close:hover{{color:var(--ink);}}
 .modal-body{{padding:14px 18px;}}
 .modal-stats{{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:14px;}}
 .ms-cell{{background:var(--bg2);padding:10px 12px;}}
 .ms-n{{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--ink);}}
-.ms-l{{font-size:8px;letter-spacing:2px;color:var(--ink4);margin-top:3px;text-transform:uppercase;}}
+.ms-l{{font-size:9px;letter-spacing:1px;color:var(--ink3);margin-top:3px;text-transform:uppercase;}}
 .hist-table{{width:100%;border-collapse:collapse;font-size:11px;}}
-.hist-table th{{padding:6px 9px;font-size:7px;letter-spacing:2px;color:var(--ink4);text-transform:uppercase;border-bottom:1px solid var(--border);text-align:center;background:var(--bg);}}
+.hist-table th{{padding:6px 9px;font-size:9px;letter-spacing:1px;color:var(--ink3);text-transform:uppercase;border-bottom:1px solid var(--border);text-align:center;background:var(--bg);}}
 .hist-table th:first-child{{text-align:left;}}
 .hist-table td{{padding:7px 9px;border-bottom:1px solid var(--border2);text-align:center;}}
 .hist-table td:first-child{{text-align:left;font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);}}
@@ -538,7 +539,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 /* ── Footer ── */
 .foot{{background:#150f0a;border-top:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;justify-content:space-between;}}
 .foot-legend{{display:flex;gap:12px;}}
-.fl-i{{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--ink4);letter-spacing:1px;}}
+.fl-i{{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--ink3);letter-spacing:1px;}}
 .fl-sq{{width:6px;height:6px;}}
 .foot-r{{font-family:'Fraunces',serif;font-style:italic;font-size:10px;color:rgba(232,217,188,.12);}}
 </style>
@@ -805,7 +806,14 @@ function openModal(sid) {{
   const d = SD[sid]; if(!d) return;
   currentSid = sid;
   const bl = BL.has(sid);
-  document.getElementById('modal-title').textContent = sid+' '+d.name+(bl?' ⚠':'');
+  const suffix = d.market === 'TSE' ? '.TW' : '.TWO';
+  const yahooUrl = `https://tw.stock.yahoo.com/quote/${{sid}}${{suffix}}`;
+  document.getElementById('modal-title').innerHTML =
+    `<a href="${{yahooUrl}}" target="_blank" rel="noopener"
+       style="color:var(--ink);text-decoration:none;border-bottom:1px solid rgba(196,87,42,.5);padding-bottom:1px;"
+       onmouseover="this.style.borderBottomColor='#c4572a'"
+       onmouseout="this.style.borderBottomColor='rgba(196,87,42,.5)'"
+    >${{sid}} ${{d.name}}</a>${{bl?' <span style=\"color:#c4572a;font-size:14px;\">⚠</span>':''}}`;
   document.getElementById('modal-sub').textContent = d.market+' · '+d.industry+' · 出現'+d.appear+'次';
   const wr = d.win_rate!==null ? d.win_rate+'%' : '—';
   const wrc = d.win_rate>=60?'#5a9e6f':(d.win_rate>=50?'#b07d2a':'#c4572a');
@@ -823,11 +831,11 @@ function openModal(sid) {{
     return `<tr><td>${{h.date}}</td><td style="text-align:center">${{chip}}</td>
       <td style="font-family:'DM Mono',monospace;font-weight:500;color:#c4a06e">${{h.composite}}</td>
       <td style="font-family:'DM Mono',monospace">${{h.close}}</td>
-      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.5)">${{t1}}</td>
+      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.7)">${{t1}}</td>
       <td>${{r3}}</td>
-      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.5)">${{t5}}</td>
-      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.4)">${{h.vr}}x</td>
-      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.4)">${{h.rsi}}</td></tr>`;
+      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.7)">${{t5}}</td>
+      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.65)">${{h.vr}}x</td>
+      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.65)">${{h.rsi}}</td></tr>`;
   }}).join('');
   const on = getWl().includes(sid);
   const ms = document.getElementById('modal-star');
@@ -878,8 +886,8 @@ if(ctx) new Chart(ctx.getContext('2d'),{{
     responsive:true,maintainAspectRatio:false,
     plugins:{{legend:{{display:false}}}},
     scales:{{
-      x:{{stacked:true,ticks:{{color:'rgba(232,217,188,.2)',font:{{size:8}}}},grid:{{display:false}},border:{{color:'rgba(232,217,188,.08)'}}}},
-      y:{{stacked:true,ticks:{{color:'rgba(232,217,188,.2)',font:{{size:8}},maxTicksLimit:3}},grid:{{color:'rgba(232,217,188,.05)'}},border:{{display:false}}}}
+      x:{{stacked:true,ticks:{{color:'rgba(232,217,188,.4)',font:{{size:8}}}},grid:{{display:false}},border:{{color:'rgba(232,217,188,.12)'}}}},
+      y:{{stacked:true,ticks:{{color:'rgba(232,217,188,.4)',font:{{size:8}},maxTicksLimit:3}},grid:{{color:'rgba(232,217,188,.08)'}},border:{{display:false}}}}
     }}
   }}
 }});
