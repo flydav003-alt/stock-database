@@ -1,0 +1,39 @@
+name: 一次性清理髒資料
+
+on:
+  workflow_dispatch:   # 手動觸發，跑完就不用再用
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: 取出程式碼
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 設定 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安裝套件
+        run: pip install pandas requests
+
+      - name: 清理髒資料
+        run: python scripts/cleanup_db.py
+
+      - name: 重建 Dashboard
+        run: python scripts/03_build_html.py
+
+      - name: Commit & Push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/stock_history.db docs/index.html
+          git diff --staged --quiet || git commit -m "cleanup: 移除兩個旗標都FALSE的髒資料"
+          git pull --rebase origin main && git push
+          echo "✅ 清理完成並推送"
