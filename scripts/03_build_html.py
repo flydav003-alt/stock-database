@@ -460,6 +460,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .bot-col[style*="span 2"]{{grid-column:span 2;}}
 .bot-col{{border-right:1px solid var(--border);}}
 .bot-col:last-child{{border-right:none;}}
+.bot-col[style*="span 4"]{{border-right:none;}}
 
 /* ── 績效表 ── */
 .pt{{width:100%;border-collapse:collapse;}}
@@ -610,15 +611,17 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   </div>
 
   <div class="bot-grid">
-    <div class="bot-col" style="grid-column:span 2;">
+
+    <!-- 行1：績效統計（全寬，span 4） -->
+    <div class="bot-col" style="grid-column:span 4;border-bottom:1px solid var(--border);">
       <div class="panel-hd">
         <div class="ph-t">模型績效統計</div>
         <div class="ph-b on">{d['t3_sample']} 筆有效樣本</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;border-top:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;">
         <div style="border-right:1px solid var(--border);">
-          <div style="padding:6px 14px;font-size:9px;letter-spacing:2px;color:var(--ink2);background:var(--bg2);border-bottom:1px solid var(--border);">
-            上市 TSE &nbsp;<span style="color:var(--ink4);font-size:9px;">{d['t3_sample_tse']} 筆</span>
+          <div style="padding:6px 16px;font-size:9px;letter-spacing:2px;color:var(--ink2);background:var(--bg2);border-bottom:1px solid var(--border);">
+            上市 TSE &nbsp;<span style="color:var(--ink4);font-size:9px;">{d['t3_sample_tse']} 筆樣本</span>
           </div>
           <table class="pt">
             <thead><tr><th>分類</th><th>T+1勝</th><th>T+1均</th><th>T+3勝</th><th>T+3均</th><th>T+5勝</th><th>T+5均</th><th>N</th></tr></thead>
@@ -626,8 +629,8 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
           </table>
         </div>
         <div>
-          <div style="padding:6px 14px;font-size:9px;letter-spacing:2px;color:var(--ink2);background:var(--bg2);border-bottom:1px solid var(--border);">
-            上櫃 OTC &nbsp;<span style="color:var(--ink4);font-size:9px;">{d['t3_sample_otc']} 筆</span>
+          <div style="padding:6px 16px;font-size:9px;letter-spacing:2px;color:var(--ink2);background:var(--bg2);border-bottom:1px solid var(--border);">
+            上櫃 OTC &nbsp;<span style="color:var(--ink4);font-size:9px;">{d['t3_sample_otc']} 筆樣本</span>
           </div>
           <table class="pt">
             <thead><tr><th>分類</th><th>T+1勝</th><th>T+1均</th><th>T+3勝</th><th>T+3均</th><th>T+5勝</th><th>T+5均</th><th>N</th></tr></thead>
@@ -636,6 +639,8 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
         </div>
       </div>
     </div>
+
+    <!-- 行2：產業 + 黑名單+圖 + 信心值 -->
     <div class="bot-col">
       <div class="panel-hd"><div class="ph-t">產業熱度</div><div class="ph-b">今日 vs 昨日</div></div>
       {ind_html}
@@ -643,16 +648,19 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
     <div class="bot-col">
       <div class="panel-hd"><div class="ph-t">黑名單警示 ④</div><div class="ph-b warn">{len(d['blacklist'])} 檔</div></div>
       {bl_html}
-      <div class="panel-hd" style="border-top:1px solid var(--border);"><div class="ph-t">每日統計</div></div>
-      <div class="chart-pad"><div style="position:relative;height:70px;"><canvas id="dc" role="img" aria-label="每日入選統計">每日入選統計</canvas></div></div>
     </div>
     <div class="bot-col">
+      <div class="panel-hd"><div class="ph-t">每日統計</div></div>
+      <div class="chart-pad"><div style="position:relative;height:100px;"><canvas id="dc" role="img" aria-label="每日入選統計">每日入選統計</canvas></div></div>
+    </div>
+    <div class="bot-col" style="border-right:none;">
       <div class="panel-hd"><div class="ph-t">最終信心值 ⑥</div><div class="ph-b">需14天</div></div>
       <div class="ph-block">
         <div class="ph-tl">累積資料中</div>
         <div class="ph-sl">composite 50%<br>連續入選 20%<br>歷史勝率 15%<br>籌碼強度 15%</div>
       </div>
     </div>
+
   </div>
 </div>
 
