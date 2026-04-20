@@ -629,11 +629,11 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   <div class="hdr-logo">台股<em>雷</em>達</div>
   <nav class="nav">
     <div class="nav-btn on" onclick="showPage('overview',this)">總覽</div>
-    <div class="nav-btn" onclick="showPage('strength',this)">強度排行 ②</div>
+    <div class="nav-btn" onclick="showPage('strength',this)">強度排行</div>
     <div class="nav-btn" onclick="showPage('retrank',this)">報酬排行 ★</div>
-    <div class="nav-btn" onclick="showPage('watchlist',this)">自選股 ③</div>
-    <div class="nav-btn" onclick="showPage('exit',this)">出場分析 ⑤</div>
-    <div class="nav-btn" onclick="showPage('backtest',this)">回測 ⑦</div>
+    <div class="nav-btn" onclick="showPage('watchlist',this)">自選股</div>
+    <div class="nav-btn" onclick="showPage('exit',this)">出場分析</div>
+    <div class="nav-btn" onclick="showPage('backtest',this)">回測</div>
   </nav>
   <div class="hdr-right">
     <div class="live-ind"><div class="live-dot"></div>LIVE</div>
@@ -766,6 +766,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 </div>
 
 <!-- ════ WATCHLIST PAGE ════ -->
+<div class="page" id="page-watchlist">
   <div class="panel-hd"><div class="ph-t">自選股清單</div></div>
   <div id="page-wl-body"></div>
 </div>
@@ -773,7 +774,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 <!-- ════ EXIT ════ -->
 <div class="page" id="page-exit">
   <div class="ph-block" style="margin:20px;">
-    <div class="ph-tl">最佳出場時機分析 ⑤</div>
+    <div class="ph-tl">最佳出場時機分析</div>
     <div class="ph-sl">按訊號類型 / 市場 / 分數區間分析 T+1/T+3/T+5 最佳出場<br>預計累積30個交易日後啟用</div>
   </div>
 </div>
@@ -781,7 +782,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 <!-- ════ BACKTEST ════ -->
 <div class="page" id="page-backtest">
   <div class="ph-block" style="margin:20px;">
-    <div class="ph-tl">回測系統 + 資金曲線 ⑦</div>
+    <div class="ph-tl">回測系統 + 資金曲線</div>
     <div class="ph-sl">模擬每日買入前N檔、T+3平倉，累積報酬曲線<br>預計累積30個交易日後啟用</div>
   </div>
 </div>
