@@ -146,6 +146,7 @@ def get_all_data(conn, imap):
         history = []
         for r in rows:
             ret3 = round((r[8]-r[1])/r[1]*100,2) if r[8] and r[1] else None
+            ret5 = round((r[9]-r[1])/r[1]*100,2) if r[9] and r[1] else None
             _s = str(r[5]).strip().upper()=='TRUE'
             _e = str(r[6]).strip().upper()=='TRUE'
             if _s and _e: cat = '綜合'
@@ -153,7 +154,7 @@ def get_all_data(conn, imap):
             elif _e: cat = '起漲'
             else: cat = '—'  # 防呆，不應出現
             history.append({'date':r[0],'close':r[1],'composite':round(r[2] or 0,1),
-                            'cat':cat,'t1':r[7],'t3':r[8],'t5':r[9],'ret3':ret3,
+                            'cat':cat,'t1':r[7],'t3':r[8],'t5':r[9],'ret3':ret3,'ret5':ret5,
                             'vr':round(r[10] or 0,2),'ret':round(r[11] or 0,2),
                             'ma28':round(r[12] or 0,1),'rsi':round(r[13] or 0,1),
                             'inst':r[14],'yoy':round(r[15] or 0,1) if r[15] else None})
@@ -186,10 +187,53 @@ def get_all_data(conn, imap):
         daily_map[dt][mkt] = cnt
     daily_list = sorted(daily_map.items(), reverse=True)[:10]
 
+    # ── 報酬排行（T+3 / T+5，至少5次入選才算，綜合分=平均報酬×勝率）──
+    def build_return_rank(rows_src, min_count=5, top_n=30):
+        acc = {}
+        for sid,nm,mkt,cl,p3,p5 in rows_src:
+            if sid not in acc:
+                acc[sid] = {'name':nm,'market':mkt,'t3':[],'t5':[]}
+            if p3 and cl:
+                acc[sid]['t3'].append((p3-cl)/cl*100)
+            if p5 and cl:
+                acc[sid]['t5'].append((p5-cl)/cl*100)
+        result_t3, result_t5 = [], []
+        for sid, v in acc.items():
+            nm, mkt = v['name'], v['market']
+            t3 = v['t3']
+            if len(t3) >= min_count:
+                avg3   = round(sum(t3)/len(t3), 2)
+                wr3    = round(sum(1 for x in t3 if x>0)/len(t3)*100, 1)
+                score3 = round(avg3 * wr3 / 100, 3)
+                result_t3.append({'stock_id':sid,'name':nm,'market':mkt,
+                                   'count':len(t3),'avg':avg3,'wr':wr3,'score':score3})
+            t5 = v['t5']
+            if len(t5) >= min_count:
+                avg5   = round(sum(t5)/len(t5), 2)
+                wr5    = round(sum(1 for x in t5 if x>0)/len(t5)*100, 1)
+                score5 = round(avg5 * wr5 / 100, 3)
+                result_t5.append({'stock_id':sid,'name':nm,'market':mkt,
+                                   'count':len(t5),'avg':avg5,'wr':wr5,'score':score5})
+        result_t3.sort(key=lambda x: -x['score'])
+        result_t5.sort(key=lambda x: -x['score'])
+        return result_t3[:top_n], result_t5[:top_n]
+
+    rr_rows = conn.execute(
+        'SELECT stock_id,name,market,close,price_t3,price_t5 FROM stock_daily WHERE price_t3 IS NOT NULL OR price_t5 IS NOT NULL'
+    ).fetchall()
+    rr_t3_all, rr_t5_all = build_return_rank(rr_rows)
+    return_rank = {
+        't3_otc': [r for r in rr_t3_all if r['market']=='OTC'],
+        't3_tse': [r for r in rr_t3_all if r['market']=='TSE'],
+        't5_otc': [r for r in rr_t5_all if r['market']=='OTC'],
+        't5_tse': [r for r in rr_t5_all if r['market']=='TSE'],
+    }
+
     return {
         'today':today,'yesterday':yesterday,'today_list':today_list,'new_ids':new_ids,
         'streak_list':streak_list,'strength':strength,'perf':perf,'perf_tse':perf_tse,'perf_otc':perf_otc,'blacklist':blacklist,
         'stock_history':stock_history,'industry_heat':industry_heat,'daily_list':daily_list,
+        'return_rank':return_rank,
         'total_records':conn.execute('SELECT COUNT(*) FROM stock_daily').fetchone()[0],
         'trade_days':conn.execute('SELECT COUNT(DISTINCT date) FROM stock_daily').fetchone()[0],
         't3_sample':len(perf_rows),'t3_sample_tse':len([r for r in perf_rows if r[6]=='TSE']),'t3_sample_otc':len([r for r in perf_rows if r[6]=='OTC']),
@@ -348,9 +392,10 @@ def build_html(d):
         return out
 
     # JS 資料
-    stock_js   = json.dumps(d['stock_history'], ensure_ascii=False)
-    strength_js= json.dumps(d['strength'], ensure_ascii=False)
-    bl_codes   = json.dumps([b['stock_id'] for b in d['blacklist']])
+    stock_js       = json.dumps(d['stock_history'], ensure_ascii=False)
+    strength_js    = json.dumps(d['strength'], ensure_ascii=False)
+    return_rank_js = json.dumps(d['return_rank'], ensure_ascii=False)
+    bl_codes       = json.dumps([b['stock_id'] for b in d['blacklist']])
     daily_labels = json.dumps([r[0] for r in reversed(d['daily_list'])])
     daily_tse    = json.dumps([r[1].get('TSE',0) for r in reversed(d['daily_list'])])
     daily_otc    = json.dumps([r[1].get('OTC',0) for r in reversed(d['daily_list'])])
@@ -506,6 +551,26 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .ph-tl{{font-size:12px;color:var(--ink3);font-weight:500;}}
 .ph-sl{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:5px;line-height:1.8;}}
 
+/* ── 報酬排行 ── */
+.rr-hd{{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);padding:0 16px;align-items:center;}}
+.rr-tab{{height:38px;display:flex;align-items:center;padding:0 12px;font-size:9px;letter-spacing:1px;color:rgba(232,217,188,.5);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;}}
+.rr-tab.on{{color:var(--ink2);border-bottom-color:var(--red);}}
+.rr-mkt-tab{{height:38px;display:flex;align-items:center;padding:0 10px;font-size:9px;letter-spacing:1px;color:rgba(232,217,188,.5);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;margin-left:auto;transition:.15s;}}
+.rr-mkt-tab.on{{color:var(--grn);border-bottom-color:var(--grn);}}
+.rr-item{{display:grid;grid-template-columns:28px 54px 1fr 38px 58px 58px 52px;gap:6px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border2);cursor:pointer;transition:.15s;}}
+.rr-item:hover{{background:var(--bg2);}}
+.rr-item:last-child{{border-bottom:none;}}
+.rr-hdr{{display:grid;grid-template-columns:28px 54px 1fr 38px 58px 58px 52px;gap:6px;padding:6px 16px;border-bottom:1px solid var(--border);background:var(--bg);}}
+.rr-hdr-c{{font-size:9px;letter-spacing:1px;color:var(--ink3);text-align:right;}}
+.rr-hdr-c:nth-child(-n+3){{text-align:left;}}
+.rr-rank{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);}}
+.rr-code{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink2);}}
+.rr-name{{font-size:11px;color:var(--ink);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}}
+.rr-cnt{{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);text-align:right;}}
+.rr-val{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;text-align:right;}}
+.rr-score{{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--ink2);text-align:right;}}
+.rr-empty{{padding:40px;text-align:center;font-size:11px;color:var(--ink4);font-style:italic;}}
+
 /* ── 強度排行 ── */
 .sr-hd{{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);padding:0 16px;}}
 .sr-tab{{height:38px;display:flex;align-items:center;padding:0 12px;font-size:9px;letter-spacing:1px;color:rgba(232,217,188,.5);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}}
@@ -527,7 +592,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 /* ── Modal ── */
 .modal-backdrop{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:flex-start;justify-content:center;padding-top:36px;overflow-y:auto;}}
 .modal-backdrop.show{{display:flex;}}
-.modal{{background:var(--bg);border:1px solid var(--border);width:680px;max-width:96vw;max-height:82vh;overflow-y:auto;margin-bottom:40px;}}
+.modal{{background:var(--bg);border:1px solid var(--border);width:780px;max-width:96vw;max-height:82vh;overflow-y:auto;margin-bottom:40px;}}
 .modal-hdr{{background:#150f0a;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}}
 .modal-title{{font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:var(--ink);}}
 .modal-title a{{font-family:'Fraunces',serif;font-size:19px;font-weight:700;}}
@@ -565,6 +630,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   <nav class="nav">
     <div class="nav-btn on" onclick="showPage('overview',this)">總覽</div>
     <div class="nav-btn" onclick="showPage('strength',this)">強度排行 ②</div>
+    <div class="nav-btn" onclick="showPage('retrank',this)">報酬排行 ★</div>
     <div class="nav-btn" onclick="showPage('watchlist',this)">自選股 ③</div>
     <div class="nav-btn" onclick="showPage('exit',this)">出場分析 ⑤</div>
     <div class="nav-btn" onclick="showPage('backtest',this)">回測 ⑦</div>
@@ -674,8 +740,32 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   <div id="strength-body">{strength_rows_html('w7')}</div>
 </div>
 
+<!-- ════ RETURN RANK ════ -->
+<div class="page" id="page-retrank">
+  <div class="rr-hd">
+    <div class="rr-tab on" id="rr-t3" onclick="showRetRank('t3',this)">T+3 報酬排行</div>
+    <div class="rr-tab" id="rr-t5" onclick="showRetRank('t5',this)">T+5 報酬排行</div>
+    <div style="margin-left:auto;display:flex;gap:0;">
+      <div class="rr-mkt-tab on" id="rr-otc" onclick="showRetMkt('otc',this)">上櫃 OTC</div>
+      <div class="rr-mkt-tab" id="rr-tse" onclick="showRetMkt('tse',this)">上市 TSE</div>
+    </div>
+  </div>
+  <div class="rr-hdr">
+    <div class="rr-hdr-c">#</div>
+    <div class="rr-hdr-c">代碼</div>
+    <div class="rr-hdr-c">名稱</div>
+    <div class="rr-hdr-c" style="text-align:right;">次數</div>
+    <div class="rr-hdr-c" style="text-align:right;">勝率</div>
+    <div class="rr-hdr-c" style="text-align:right;">均報酬</div>
+    <div class="rr-hdr-c" style="text-align:right;">綜合分</div>
+  </div>
+  <div id="rr-body"></div>
+  <div style="padding:8px 16px;font-size:9px;color:var(--ink4);letter-spacing:1px;border-top:1px solid var(--border);background:var(--bg);">
+    綜合分 = 平均報酬 × 勝率 &nbsp;·&nbsp; 最少5次入選才列入 &nbsp;·&nbsp; 點擊查看個股歷史
+  </div>
+</div>
+
 <!-- ════ WATCHLIST PAGE ════ -->
-<div class="page" id="page-watchlist">
   <div class="panel-hd"><div class="ph-t">自選股清單</div></div>
   <div id="page-wl-body"></div>
 </div>
@@ -709,7 +799,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
     <div class="modal-body">
       <div class="modal-stats" id="modal-stats"></div>
       <table class="hist-table">
-        <thead><tr><th>日期</th><th>類型</th><th>分數</th><th>收盤</th><th>T+1</th><th>T+3報酬</th><th>T+5</th><th>量比</th><th>RSI</th></tr></thead>
+        <thead><tr><th>日期</th><th>類型</th><th>分數</th><th>收盤</th><th>T+1</th><th>T+3報酬</th><th>T+5報酬</th><th>量比</th><th>RSI</th></tr></thead>
         <tbody id="modal-tbody"></tbody>
       </table>
     </div>
@@ -730,9 +820,12 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 <script>
 const SD = {stock_js};
 const STR = {strength_js};
+const RR = {return_rank_js};
 const BL = new Set({bl_codes});
 let currentSid = '';
 let searchTab = 'search';
+let rrPeriod = 't3';
+let rrMkt = 'otc';
 
 // ── 頁面切換 ──
 function showPage(id, el) {{
@@ -742,6 +835,7 @@ function showPage(id, el) {{
   if(el) el.classList.add('on');
   if(id==='watchlist') renderPageWl();
   if(id==='overview') initSearch();
+  if(id==='retrank') renderRetRank();
 }}
 
 // ── 搜尋 ──
@@ -867,13 +961,14 @@ function openModal(sid) {{
                  h.cat==='強勢'?'<span class="cat-chip chip-strong">強勢</span>':
                                 '<span class="cat-chip chip-early">起漲</span>';
     const r3 = h.ret3!==null?`<span style="color:${{h.ret3>=0?'#5a9e6f':'#c4572a'}}">${{h.ret3>=0?'+':''}}${{h.ret3}}%</span>`:'—';
-    const t1 = h.t1?h.t1.toFixed(1):'—', t5=h.t5?h.t5.toFixed(1):'—';
+    const r5 = h.ret5!==null?`<span style="color:${{h.ret5>=0?'#5a9e6f':'#c4572a'}}">${{h.ret5>=0?'+':''}}${{h.ret5}}%</span>`:'—';
+    const t1 = h.t1?h.t1.toFixed(1):'—';
     return `<tr><td>${{h.date}}</td><td style="text-align:center">${{chip}}</td>
       <td style="font-family:'DM Mono',monospace;font-weight:500;color:#c4a06e">${{h.composite}}</td>
       <td style="font-family:'DM Mono',monospace">${{h.close}}</td>
       <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.7)">${{t1}}</td>
       <td>${{r3}}</td>
-      <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.7)">${{t5}}</td>
+      <td>${{r5}}</td>
       <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.65)">${{h.vr}}x</td>
       <td style="font-family:'DM Mono',monospace;color:rgba(232,217,188,.65)">${{h.rsi}}</td></tr>`;
   }}).join('');
@@ -897,6 +992,44 @@ function showStrength(key, el) {{
       <div class="sr-cnt">${{s.cnt}}天</div>
       <div class="sr-avg">${{s.avg}}</div>
     </div>`).join('');
+}}
+
+// ── 報酬排行 ──
+function renderRetRank() {{
+  const key = rrPeriod + '_' + rrMkt;
+  const data = RR[key] || [];
+  const body = document.getElementById('rr-body');
+  if(!data.length) {{
+    body.innerHTML = '<div class="rr-empty">資料累積中 — 需要至少 5 次入選紀錄才會列入排名</div>';
+    return;
+  }}
+  body.innerHTML = data.map((s,i) => {{
+    const avgC = s.avg >= 0 ? '#5a9e6f' : '#c4572a';
+    const avgS = s.avg >= 0 ? '+' + s.avg.toFixed(2) + '%' : s.avg.toFixed(2) + '%';
+    const wrC  = s.wr >= 65 ? '#5a9e6f' : (s.wr >= 50 ? '#b07d2a' : '#c4572a');
+    const medal = i===0 ? '🥇' : (i===1 ? '🥈' : (i===2 ? '🥉' : String(i+1).padStart(2,'0')));
+    return `<div class="rr-item" onclick="openModal('${{s.stock_id}}')">
+      <div class="rr-rank">${{medal}}</div>
+      <div class="rr-code">${{s.stock_id}}</div>
+      <div class="rr-name">${{s.name}}</div>
+      <div class="rr-cnt">${{s.count}}次</div>
+      <div class="rr-val" style="color:${{wrC}}">${{s.wr}}%</div>
+      <div class="rr-val" style="color:${{avgC}}">${{avgS}}</div>
+      <div class="rr-score">${{s.score.toFixed(2)}}</div>
+    </div>`;
+  }}).join('');
+}}
+function showRetRank(period, el) {{
+  rrPeriod = period;
+  document.querySelectorAll('.rr-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderRetRank();
+}}
+function showRetMkt(mkt, el) {{
+  rrMkt = mkt;
+  document.querySelectorAll('.rr-mkt-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderRetRank();
 }}
 
 // ── 初始化 ──
