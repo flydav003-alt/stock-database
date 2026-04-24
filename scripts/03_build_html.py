@@ -361,7 +361,20 @@ def build_html(d):
     rr_top20_ids = d['rr_top20_ids']
     conf_map     = d['confidence_map']
 
-    # 過熱警示
+    # 信心值列表 HTML（預先計算，避免巢狀 f-string 問題）
+    conf_list_html = ''
+    for sid, v in sorted(conf_map.items(), key=lambda x: -x[1])[:8]:
+        name = d['stock_history'].get(str(sid), {}).get('name', '')
+        bar_w = min(int(v), 100)
+        cc = conf_color(v)
+        conf_list_html += (
+            f'<div class="conf-item" onclick="openModal(\'{sid}\')">'
+            f'<span class="conf-item-code">{sid}</span>'
+            f'<span class="conf-item-name">{name}</span>'
+            f'<div class="conf-bar-wrap"><div class="conf-bar" style="width:{bar_w}%;background:{cc};"></div></div>'
+            f'<span class="conf-item-score" style="color:{cc};">{v}</span>'
+            f'</div>'
+        )
     hot = [s for s in d['streak_list'] if s['count']>=5]
     alert_html = ''
     if hot:
@@ -855,12 +868,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
         </div>
       </div>
       <div class="conf-list" id="conf-list">
-        {''.join(f"""<div class="conf-item" onclick="openModal('{sid}')">
-          <span class="conf-item-code">{sid}</span>
-          <span class="conf-item-name">{d['stock_history'].get(str(sid),{{}}).get('name','')}</span>
-          <div class="conf-bar-wrap"><div class="conf-bar" style="width:{min(int(v),100)}%;background:{conf_color(v)};"></div></div>
-          <span class="conf-item-score" style="color:{conf_color(v)};">{v}</span>
-        </div>""" for sid, v in sorted(conf_map.items(), key=lambda x: -x[1])[:8])}
+        {conf_list_html}
       </div>
       <div class="conf-formula">
         composite×35% + 連續天數×15%<br>
