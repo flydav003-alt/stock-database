@@ -1,12 +1,9 @@
 """
-03_build_html.py — 完整 Dashboard（深夜咖啡館主題）v2
+03_build_html.py — 完整 Dashboard（深夜咖啡館主題）v3
 改動：
-  - 三欄版面（新進榜 / 連續入選 / 搜尋+自選股）
-  - 新進榜加入漲幅%
-  - 股票中文名亮度提升
-  - 產業從 JSON 快取讀取
-  - 導覽非選中項更明顯
-  - 右欄整合搜尋框
+  - 黑名單逃脫條款：T+3 勝率 > 50% 且 T+5 勝率 > 50% 自動脫離
+  - 報酬排行前20加 🏅 標記（新進榜 / 連續入選 / 搜尋列表）
+  - 最終信心值 ⑥ 正式實作（composite×35% + 連續×15% + T+3勝率×15% + T+5勝率×15% + 法人×20%）
 """
 import sqlite3, os, json, time
 from datetime import datetime, timedelta
@@ -24,7 +21,6 @@ def load_industry_map():
         except: pass
     return {}
 
-# 代碼前綴 fallback（API 和 fallback dict 都找不到時用）
 _PREFIX_INDUSTRY = {
     '1': '傳統產業', '2': '電子業', '3': '電子零組件',
     '4': '生技醫療', '5': '金融保險', '6': '新興電子',
@@ -35,7 +31,6 @@ def get_industry(sid, imap):
     sid = str(sid)
     if sid in imap:
         return imap[sid]
-    # 代碼前綴 fallback
     prefix = sid[0] if sid else ''
     return _PREFIX_INDUSTRY.get(prefix, '其他')
 
@@ -117,21 +112,39 @@ def get_all_data(conn, imap):
         perf_tse = calc_perf_for(tse_rows)
         perf_otc = calc_perf_for(otc_rows)
 
-    # 黑名單
+    # ── 全局勝率（T+3 / T+5），作為個股樣本不足時的替代值 ──
+    global_t3_wr = (perf.get('全部') or {}).get('t3_win') or 50.0
+    global_t5_wr = (perf.get('全部') or {}).get('t5_win') or 50.0
+
+    # ── 黑名單（逃脫條款：T+3勝率 > 50% 且 T+5勝率 > 50% 則排除）──
     blacklist = []
     for r in conn.execute('''
-        SELECT stock_id,name,market,COUNT(*) as total,
-               SUM(CASE WHEN price_t3 IS NOT NULL AND (price_t3-close)/close<0 THEN 1 ELSE 0 END) as neg3,
-               SUM(CASE WHEN price_t5 IS NOT NULL AND (price_t5-close)/close<0 THEN 1 ELSE 0 END) as neg5
+        SELECT stock_id, name, market,
+               COUNT(*) as total,
+               SUM(CASE WHEN price_t3 IS NOT NULL AND (price_t3-close)/close < 0 THEN 1 ELSE 0 END) as neg3,
+               SUM(CASE WHEN price_t5 IS NOT NULL AND (price_t5-close)/close < 0 THEN 1 ELSE 0 END) as neg5,
+               SUM(CASE WHEN price_t3 IS NOT NULL THEN 1 ELSE 0 END) as cnt3,
+               SUM(CASE WHEN price_t5 IS NOT NULL THEN 1 ELSE 0 END) as cnt5,
+               SUM(CASE WHEN price_t3 IS NOT NULL AND (price_t3-close)/close > 0 THEN 1 ELSE 0 END) as pos3,
+               SUM(CASE WHEN price_t5 IS NOT NULL AND (price_t5-close)/close > 0 THEN 1 ELSE 0 END) as pos5
         FROM stock_daily WHERE price_t3 IS NOT NULL
-        GROUP BY stock_id,name,market HAVING neg3>=3 OR neg5>=3
+        GROUP BY stock_id, name, market
+        HAVING neg3 >= 3 OR neg5 >= 3
     ''').fetchall():
+        neg3, neg5, cnt3, cnt5, pos3, pos5 = r[4], r[5], r[6], r[7], r[8], r[9]
+        # 逃脫條款：T+3勝率 > 50% 且 T+5勝率 > 50%
+        wr3 = pos3 / cnt3 * 100 if cnt3 > 0 else 0
+        wr5 = pos5 / cnt5 * 100 if cnt5 > 0 else 0
+        if wr3 > 50 and wr5 > 50:
+            continue  # 已脫離黑名單
         reasons = []
-        if r[4]>=3: reasons.append(f'T+3負報酬{r[4]}次')
-        if r[5]>=3: reasons.append(f'T+5負報酬{r[5]}次')
+        if neg3 >= 3: reasons.append(f'T+3負報酬{neg3}次')
+        if neg5 >= 3: reasons.append(f'T+5負報酬{neg5}次')
         blacklist.append({'stock_id':r[0],'name':r[1],'market':r[2],'reason':'·'.join(reasons)})
 
-    # 個股歷史（modal 用）
+    bl_ids = set(b['stock_id'] for b in blacklist)
+
+    # ── 個股歷史（modal 用）──
     stock_history = {}
     for sid,nm,mkt in conn.execute('SELECT DISTINCT stock_id,name,market FROM stock_daily').fetchall():
         rows = conn.execute('''
@@ -152,42 +165,69 @@ def get_all_data(conn, imap):
             if _s and _e: cat = '綜合'
             elif _s: cat = '強勢'
             elif _e: cat = '起漲'
-            else: cat = '—'  # 防呆，不應出現
+            else: cat = '—'
             history.append({'date':r[0],'close':r[1],'composite':round(r[2] or 0,1),
                             'cat':cat,'t1':r[7],'t3':r[8],'t5':r[9],'ret3':ret3,'ret5':ret5,
                             'vr':round(r[10] or 0,2),'ret':round(r[11] or 0,2),
                             'ma28':round(r[12] or 0,1),'rsi':round(r[13] or 0,1),
                             'inst':r[14],'yoy':round(r[15] or 0,1) if r[15] else None})
         t3_vals = [h['ret3'] for h in history if h['ret3'] is not None]
-        wr = round(sum(1 for x in t3_vals if x>0)/len(t3_vals)*100) if t3_vals else None
+        t5_vals = [h['ret5'] for h in history if h['ret5'] is not None]
+        wr3_ind = round(sum(1 for x in t3_vals if x>0)/len(t3_vals)*100) if t3_vals else None
+        wr5_ind = round(sum(1 for x in t5_vals if x>0)/len(t5_vals)*100) if t5_vals else None
         stock_history[str(sid)] = {'name':nm,'market':mkt,'history':history,
-                                   'appear':len(history),'win_rate':wr,
+                                   'appear':len(history),'win_rate':wr3_ind,
+                                   'win_rate_t5':wr5_ind,
                                    'industry':get_industry(str(sid), imap)}
 
-    # 產業熱度
-    today_ind = defaultdict(int)
-    yday_ind  = defaultdict(int)
+    # ── 最終信心值計算 ──
+    # 需要今日 streak 天數（連續入選）
+    streak_today = {s['stock_id']: s['count'] for s in streak_list}
+
+    confidence_map = {}
     for r in today_list:
-        today_ind[get_industry(r['stock_id'], imap)] += 1
-    if yesterday:
-        for (sid,) in conn.execute('SELECT stock_id FROM stock_daily WHERE date=?', [yesterday]).fetchall():
-            yday_ind[get_industry(str(sid), imap)] += 1
-    industry_heat = sorted([
-        {'name':ind,'today':td,'yesterday':yday_ind.get(ind,0),'delta':td-yday_ind.get(ind,0)}
-        for ind,td in today_ind.items() if td > 0 and ind != '其他'
-    ], key=lambda x: -x['today'])
-    # 加上「其他」排最後
-    other_td = today_ind.get('其他',0)
-    if other_td > 0:
-        industry_heat.append({'name':'其他','today':other_td,'yesterday':yday_ind.get('其他',0),'delta':other_td-yday_ind.get('其他',0)})
+        sid = r['stock_id']
+        sh  = stock_history.get(str(sid), {})
 
-    # 每日統計
-    daily_map = defaultdict(lambda: {'TSE':0,'OTC':0})
-    for dt,mkt,cnt in conn.execute('SELECT date,market,COUNT(*) FROM stock_daily GROUP BY date,market ORDER BY date DESC LIMIT 20').fetchall():
-        daily_map[dt][mkt] = cnt
-    daily_list = sorted(daily_map.items(), reverse=True)[:10]
+        # 1. composite 分數（0~100）
+        comp_score = min(max(float(r.get('composite_score') or 0), 0), 100)
 
-    # ── 報酬排行（T+3 / T+5，至少5次入選才算，綜合分=平均報酬×勝率）──
+        # 2. 連續天數分數
+        streak_days = streak_today.get(sid, 1)
+        streak_score = min(streak_days / 5.0, 1.0) * 100
+
+        # 3. T+3 個人勝率（樣本 < 3 筆用全局）
+        t3_vals_ind = [h['ret3'] for h in sh.get('history',[]) if h['ret3'] is not None]
+        if len(t3_vals_ind) >= 3:
+            t3_wr = sum(1 for x in t3_vals_ind if x > 0) / len(t3_vals_ind) * 100
+        else:
+            t3_wr = global_t3_wr
+
+        # 4. T+5 個人勝率（樣本 < 3 筆用全局）
+        t5_vals_ind = [h['ret5'] for h in sh.get('history',[]) if h['ret5'] is not None]
+        if len(t5_vals_ind) >= 3:
+            t5_wr = sum(1 for x in t5_vals_ind if x > 0) / len(t5_vals_ind) * 100
+        else:
+            t5_wr = global_t5_wr
+
+        # 5. 法人連買天數分數
+        inst_days = float(r.get('inst_consec_days') or 0)
+        inst_score = min(inst_days / 5.0, 1.0) * 100
+
+        # 最終信心值
+        conf = (comp_score * 0.35 + streak_score * 0.15 +
+                t3_wr * 0.15 + t5_wr * 0.15 + inst_score * 0.20)
+        confidence_map[sid] = round(conf, 1)
+
+    # 今日平均信心值（用於 KPI 顯示）
+    conf_vals = list(confidence_map.values())
+    avg_conf  = round(sum(conf_vals) / len(conf_vals), 1) if conf_vals else None
+
+    # ── 報酬排行前20 stock_id 集合（任一榜上榜即標記）──
+    rr_rows_raw = conn.execute(
+        'SELECT stock_id,name,market,close,price_t3,price_t5 FROM stock_daily WHERE price_t3 IS NOT NULL OR price_t5 IS NOT NULL'
+    ).fetchall()
+
     def build_return_rank(rows_src, min_count=5, top_n=30):
         acc = {}
         for sid,nm,mkt,cl,p3,p5 in rows_src:
@@ -218,10 +258,7 @@ def get_all_data(conn, imap):
         result_t5.sort(key=lambda x: -x['score'])
         return result_t3[:top_n], result_t5[:top_n]
 
-    rr_rows = conn.execute(
-        'SELECT stock_id,name,market,close,price_t3,price_t5 FROM stock_daily WHERE price_t3 IS NOT NULL OR price_t5 IS NOT NULL'
-    ).fetchall()
-    rr_t3_all, rr_t5_all = build_return_rank(rr_rows)
+    rr_t3_all, rr_t5_all = build_return_rank(rr_rows_raw)
     return_rank = {
         't3_otc': [r for r in rr_t3_all if r['market']=='OTC'],
         't3_tse': [r for r in rr_t3_all if r['market']=='TSE'],
@@ -229,27 +266,65 @@ def get_all_data(conn, imap):
         't5_tse': [r for r in rr_t5_all if r['market']=='TSE'],
     }
 
+    # 前20報酬排行 ID 集合（所有榜前20聯集）
+    rr_top20_ids = set()
+    for lst in return_rank.values():
+        for item in lst[:20]:
+            rr_top20_ids.add(item['stock_id'])
+
+    # 產業熱度
+    today_ind = defaultdict(int)
+    yday_ind  = defaultdict(int)
+    for r in today_list:
+        today_ind[get_industry(r['stock_id'], imap)] += 1
+    if yesterday:
+        for (sid,) in conn.execute('SELECT stock_id FROM stock_daily WHERE date=?', [yesterday]).fetchall():
+            yday_ind[get_industry(str(sid), imap)] += 1
+    industry_heat = sorted([
+        {'name':ind,'today':td,'yesterday':yday_ind.get(ind,0),'delta':td-yday_ind.get(ind,0)}
+        for ind,td in today_ind.items() if td > 0 and ind != '其他'
+    ], key=lambda x: -x['today'])
+    other_td = today_ind.get('其他',0)
+    if other_td > 0:
+        industry_heat.append({'name':'其他','today':other_td,'yesterday':yday_ind.get('其他',0),'delta':other_td-yday_ind.get('其他',0)})
+
+    # 每日統計
+    daily_map = defaultdict(lambda: {'TSE':0,'OTC':0})
+    for dt,mkt,cnt in conn.execute('SELECT date,market,COUNT(*) FROM stock_daily GROUP BY date,market ORDER BY date DESC LIMIT 20').fetchall():
+        daily_map[dt][mkt] = cnt
+    daily_list = sorted(daily_map.items(), reverse=True)[:10]
+
     return {
         'today':today,'yesterday':yesterday,'today_list':today_list,'new_ids':new_ids,
-        'streak_list':streak_list,'strength':strength,'perf':perf,'perf_tse':perf_tse,'perf_otc':perf_otc,'blacklist':blacklist,
+        'streak_list':streak_list,'strength':strength,
+        'perf':perf,'perf_tse':perf_tse,'perf_otc':perf_otc,
+        'blacklist':blacklist,'bl_ids':bl_ids,
         'stock_history':stock_history,'industry_heat':industry_heat,'daily_list':daily_list,
-        'return_rank':return_rank,
+        'return_rank':return_rank,'rr_top20_ids':rr_top20_ids,
+        'confidence_map':confidence_map,'avg_conf':avg_conf,
+        'global_t3_wr':global_t3_wr,'global_t5_wr':global_t5_wr,
         'total_records':conn.execute('SELECT COUNT(*) FROM stock_daily').fetchone()[0],
         'trade_days':conn.execute('SELECT COUNT(DISTINCT date) FROM stock_daily').fetchone()[0],
-        't3_sample':len(perf_rows),'t3_sample_tse':len([r for r in perf_rows if r[6]=='TSE']),'t3_sample_otc':len([r for r in perf_rows if r[6]=='OTC']),
+        't3_sample':len(perf_rows),
+        't3_sample_tse':len([r for r in perf_rows if r[6]=='TSE']),
+        't3_sample_otc':len([r for r in perf_rows if r[6]=='OTC']),
     }
 
 def fmt_pct(v, d=1):
     if v is None: return '—'
     return f'+{v:.{d}f}%' if v >= 0 else f'{v:.{d}f}%'
 
-def wc(v): # win color
+def wc(v):
     if v is None: return '#6a5f54'
     return '#5a9e6f' if v>=65 else ('#b07d2a' if v>=55 else '#c4572a')
 
-def ac(v): # avg color
+def ac(v):
     if v is None: return '#6a5f54'
     return '#5a9e6f' if v>=0 else '#c4572a'
+
+def conf_color(v):
+    if v is None: return '#6a5f54'
+    return '#5a9e6f' if v>=70 else ('#b07d2a' if v>=50 else '#c4572a')
 
 def perf_row(cat, data, sq):
     if not data: return f'<tr><td><div class="pt-cat"><div class="pt-sq" style="background:{sq};"></div>{cat}</div></td><td colspan="6" class="nd-cell">累積中</td></tr>'
@@ -273,6 +348,19 @@ def build_html(d):
     kpi_t3w = f'<span style="color:{wc(t3_win)};">{t3_win}%</span>' if t3_win else '<span style="color:#6a5f54;font-size:20px;font-style:italic;">累積中</span>'
     kpi_t3a = f'<span style="color:{ac(t3_avg)};">{fmt_pct(t3_avg)}</span>' if t3_avg is not None else '<span style="color:#6a5f54;font-size:20px;font-style:italic;">累積中</span>'
 
+    # 信心值 KPI
+    avg_conf = d['avg_conf']
+    if avg_conf is not None:
+        kpi_conf = f'<span style="color:{conf_color(avg_conf)};">{avg_conf}</span>'
+        kpi_conf_sub = f'今日 {today_count} 檔平均'
+    else:
+        kpi_conf = '<span style="color:#6a5f54;font-size:20px;font-style:italic;">累積中</span>'
+        kpi_conf_sub = '需14天資料'
+
+    bl_ids       = d['bl_ids']
+    rr_top20_ids = d['rr_top20_ids']
+    conf_map     = d['confidence_map']
+
     # 過熱警示
     hot = [s for s in d['streak_list'] if s['count']>=5]
     alert_html = ''
@@ -291,26 +379,35 @@ def build_html(d):
     new_rows = ''
     shown = 0
     for r in d['today_list']:
-        if r['stock_id'] not in d['new_ids']: continue
+        sid = r['stock_id']
+        if sid not in d['new_ids']: continue
         if shown >= 10: break
         cat, acc = cat_info(r)
         cs  = round(r.get('composite_score') or 0, 1)
         ret = r.get('daily_return_pct') or 0
         ret_s = f'+{ret:.1f}%' if ret >= 0 else f'{ret:.1f}%'
         ret_c = '#5a9e6f' if ret >= 0 else '#c4572a'
-        new_rows += f'''<div class="ne-item" onclick="openModal('{r['stock_id']}')">
+        # 標記
+        bl_tag  = '<span class="tag-bl" title="黑名單警示">⚠</span>' if sid in bl_ids else ''
+        rr_tag  = '<span class="tag-rr" title="報酬排行前20">🏅</span>' if sid in rr_top20_ids else ''
+        # 信心值
+        conf = conf_map.get(sid)
+        conf_html = f'<div class="ne-conf" style="color:{conf_color(conf)};">{conf}</div>' if conf is not None else ''
+        new_rows += f'''<div class="ne-item" onclick="openModal('{sid}')">
           <div class="ne-acc" style="background:{acc};"></div>
           <div class="ne-main">
             <div class="ne-top">
-              <span class="ne-code">{r['stock_id']}</span>
+              <span class="ne-code">{sid}</span>
+              {bl_tag}{rr_tag}
               <span class="ne-ret" style="color:{ret_c};">{ret_s}</span>
-              <span class="star-btn" onclick="event.stopPropagation();toggleStar('{r['stock_id']}')" id="star-{r['stock_id']}">☆</span>
+              <span class="star-btn" onclick="event.stopPropagation();toggleStar('{sid}')" id="star-{sid}">☆</span>
             </div>
             <div class="ne-name">{r['name']} · {r['market']}</div>
           </div>
           <div class="ne-right">
             <div class="ne-score">{cs}</div>
             <div class="ne-type">{cat}轉強</div>
+            {conf_html}
           </div>
         </div>'''
         shown += 1
@@ -321,11 +418,14 @@ def build_html(d):
     # ── 連續入選 ──
     streak_rows = ''
     for i, s in enumerate(d['streak_list'][:10]):
+        sid = s['stock_id']
         hot_tag = '<span class="hot-tag">過熱</span>' if s['count']>=5 else ''
+        bl_tag2 = '<span class="tag-bl" title="黑名單警示">⚠</span>' if sid in bl_ids else ''
+        rr_tag2 = '<span class="tag-rr" title="報酬排行前20">🏅</span>' if sid in rr_top20_ids else ''
         dc = '#c4572a' if s['count']>=5 else ('#b07d2a' if s['count']>=3 else '#e8d9bc')
-        streak_rows += f'''<div class="st-item" onclick="openModal('{s['stock_id']}')">
+        streak_rows += f'''<div class="st-item" onclick="openModal('{sid}')">
           <div class="st-rank">{str(i+1).zfill(2)}</div>
-          <div class="st-code">{s['stock_id']}</div>
+          <div class="st-code">{sid} {bl_tag2}{rr_tag2}</div>
           <div class="st-info">
             <div class="st-name">{s['name']} {hot_tag}</div>
             <div class="st-sub">{s['market']} · 均分{s['avg_score']}</div>
@@ -334,12 +434,10 @@ def build_html(d):
         </div>'''
 
     # ── 績效 ──
-    # TSE 表
     phtml_tse  = perf_row('綜合轉強', d['perf_tse'].get('綜合轉強'), '#c4572a')
     phtml_tse += perf_row('強勢確認', d['perf_tse'].get('強勢確認'), '#5a9e6f')
     phtml_tse += perf_row('起漲預警', d['perf_tse'].get('起漲預警'), '#b07d2a')
     phtml_tse += perf_row('全部合計', d['perf_tse'].get('全部'), '#5a5048')
-    # OTC 表
     phtml_otc  = perf_row('綜合轉強', d['perf_otc'].get('綜合轉強'), '#c4572a')
     phtml_otc += perf_row('強勢確認', d['perf_otc'].get('強勢確認'), '#5a9e6f')
     phtml_otc += perf_row('起漲預警', d['perf_otc'].get('起漲預警'), '#b07d2a')
@@ -361,9 +459,9 @@ def build_html(d):
           <div class="ind-d" style="color:{dc2};">{ds}</div>
         </div>'''
 
-    # ── 黑名單 ──
+    # ── 黑名單（全部顯示，可捲動）──
     bl_html = ''
-    for b in d['blacklist'][:5]:
+    for b in d['blacklist']:
         bl_html += f'''<div class="bl-item">
           <div class="bl-acc"></div>
           <div>
@@ -382,9 +480,12 @@ def build_html(d):
     def strength_rows_html(key):
         out = ''
         for i, s in enumerate(d['strength'].get(key, [])[:20]):
-            out += f'''<div class="sr-item" onclick="openModal('{s['stock_id']}')">
+            sid = s['stock_id']
+            bl_tag3 = '<span class="tag-bl" title="黑名單警示">⚠</span>' if sid in bl_ids else ''
+            rr_tag3 = '<span class="tag-rr" title="報酬排行前20">🏅</span>' if sid in rr_top20_ids else ''
+            out += f'''<div class="sr-item" onclick="openModal('{sid}')">
               <div class="sr-rank">{i+1}</div>
-              <div class="sr-code">{s['stock_id']} <span class="star-btn" onclick="event.stopPropagation();toggleStar('{s['stock_id']}')" id="star-sr-{s['stock_id']}-{key}">☆</span></div>
+              <div class="sr-code">{sid} {bl_tag3}{rr_tag3} <span class="star-btn" onclick="event.stopPropagation();toggleStar('{sid}')" id="star-sr-{sid}-{key}">☆</span></div>
               <div class="sr-name">{s['name']}<span class="sr-mkt">{s['market']}</span></div>
               <div class="sr-cnt">{s['cnt']}天</div>
               <div class="sr-avg">{s['avg']}</div>
@@ -396,9 +497,11 @@ def build_html(d):
     strength_js    = json.dumps(d['strength'], ensure_ascii=False)
     return_rank_js = json.dumps(d['return_rank'], ensure_ascii=False)
     bl_codes       = json.dumps([b['stock_id'] for b in d['blacklist']])
-    daily_labels = json.dumps([r[0] for r in reversed(d['daily_list'])])
-    daily_tse    = json.dumps([r[1].get('TSE',0) for r in reversed(d['daily_list'])])
-    daily_otc    = json.dumps([r[1].get('OTC',0) for r in reversed(d['daily_list'])])
+    rr_top20_js    = json.dumps(list(d['rr_top20_ids']))
+    conf_map_js    = json.dumps(d['confidence_map'], ensure_ascii=False)
+    daily_labels   = json.dumps([r[0] for r in reversed(d['daily_list'])])
+    daily_tse      = json.dumps([r[1].get('TSE',0) for r in reversed(d['daily_list'])])
+    daily_otc      = json.dumps([r[1].get('OTC',0) for r in reversed(d['daily_list'])])
 
     html = f'''<!DOCTYPE html>
 <html lang="zh-TW">
@@ -464,17 +567,22 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .ne-item:last-child{{border-bottom:none;}}
 .ne-acc{{height:36px;flex-shrink:0;}}
 .ne-main{{min-width:0;}}
-.ne-top{{display:flex;align-items:center;gap:6px;}}
+.ne-top{{display:flex;align-items:center;gap:5px;}}
 .ne-code{{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--ink2);}}
 .ne-ret{{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;}}
 .ne-name{{font-size:11px;color:var(--ink2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}}
 .ne-right{{text-align:right;flex-shrink:0;}}
 .ne-score{{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--ink);}}
 .ne-type{{font-size:10px;color:var(--ink3);letter-spacing:.5px;}}
+.ne-conf{{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;margin-top:2px;}}
 .more-hint{{padding:8px 16px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:1px;background:var(--bg2);}}
 
+/* ── 標記 ── */
+.tag-bl{{font-size:11px;color:var(--red);opacity:.85;cursor:default;line-height:1;}}
+.tag-rr{{font-size:11px;cursor:default;line-height:1;}}
+
 /* ── 連續入選 ── */
-.st-item{{display:grid;grid-template-columns:22px 46px 1fr 26px;gap:6px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border2);cursor:pointer;transition:.15s;}}
+.st-item{{display:grid;grid-template-columns:22px 64px 1fr 26px;gap:6px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border2);cursor:pointer;transition:.15s;}}
 .st-item:hover{{background:var(--bg2);}}
 .st-item:last-child{{border-bottom:none;}}
 .st-rank{{font-size:9px;color:var(--ink4);font-family:'DM Mono',monospace;}}
@@ -534,6 +642,10 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .ind-d{{font-family:'DM Mono',monospace;font-size:10px;width:22px;text-align:right;}}
 
 /* ── 黑名單 ── */
+.bl-scroll{{max-height:220px;overflow-y:auto;}}
+.bl-scroll::-webkit-scrollbar{{width:3px;}}
+.bl-scroll::-webkit-scrollbar-track{{background:transparent;}}
+.bl-scroll::-webkit-scrollbar-thumb{{background:rgba(196,87,42,.3);border-radius:2px;}}
 .bl-item{{display:flex;align-items:flex-start;gap:8px;padding:9px 14px;border-bottom:1px solid var(--border2);background:rgba(196,87,42,.03);}}
 .bl-item:last-child{{border-bottom:none;}}
 .bl-acc{{width:2px;height:28px;background:var(--red);flex-shrink:0;margin-top:2px;}}
@@ -546,10 +658,24 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 /* ── 每日圖 ── */
 .chart-pad{{padding:12px 14px 8px;background:var(--card);}}
 
-/* ── 信心值佔位 ── */
+/* ── 信心值 ── */
 .ph-block{{padding:24px 16px;text-align:center;margin:10px;border:1px dashed var(--border);}}
 .ph-tl{{font-size:12px;color:var(--ink3);font-weight:500;}}
 .ph-sl{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:5px;line-height:1.8;}}
+.conf-grid{{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin:10px;}}
+.conf-cell{{background:var(--bg2);padding:10px 12px;text-align:center;}}
+.conf-cell-n{{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;}}
+.conf-cell-l{{font-size:9px;letter-spacing:1px;color:var(--ink3);margin-top:2px;}}
+.conf-list{{padding:0 10px 10px;}}
+.conf-item{{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-bottom:1px solid var(--border2);font-size:11px;cursor:pointer;transition:.15s;}}
+.conf-item:hover{{background:var(--bg2);}}
+.conf-item:last-child{{border-bottom:none;}}
+.conf-item-code{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink2);}}
+.conf-item-name{{flex:1;font-size:11px;color:var(--ink);margin:0 8px;}}
+.conf-item-score{{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;}}
+.conf-bar-wrap{{width:60px;height:3px;background:var(--bg3);margin-left:8px;}}
+.conf-bar{{height:3px;}}
+.conf-formula{{margin:8px 10px 0;padding:8px 10px;background:var(--bg2);border:1px solid var(--border2);font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);line-height:1.9;letter-spacing:.3px;}}
 
 /* ── 報酬排行 ── */
 .rr-hd{{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);padding:0 16px;align-items:center;}}
@@ -564,7 +690,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .rr-hdr-c{{font-size:9px;letter-spacing:1px;color:var(--ink3);text-align:right;}}
 .rr-hdr-c:nth-child(-n+3){{text-align:left;}}
 .rr-rank{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);}}
-.rr-code{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink2);}}
+.rr-code{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink2);display:flex;align-items:center;gap:4px;}}
 .rr-name{{font-size:11px;color:var(--ink);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}}
 .rr-cnt{{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);text-align:right;}}
 .rr-val{{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;text-align:right;}}
@@ -575,7 +701,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .sr-hd{{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);padding:0 16px;}}
 .sr-tab{{height:38px;display:flex;align-items:center;padding:0 12px;font-size:9px;letter-spacing:1px;color:rgba(232,217,188,.5);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}}
 .sr-tab.on{{color:var(--ink2);border-bottom-color:var(--red);}}
-.sr-item{{display:grid;grid-template-columns:26px 54px 1fr 38px 42px;gap:6px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border2);cursor:pointer;transition:.15s;}}
+.sr-item{{display:grid;grid-template-columns:26px 80px 1fr 38px 42px;gap:6px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border2);cursor:pointer;transition:.15s;}}
 .sr-item:hover{{background:var(--bg2);}}
 .sr-item:last-child{{border-bottom:none;}}
 .sr-rank{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);}}
@@ -646,7 +772,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   <div class="hkpi"><div class="hkpi-n">{kpi_t3w}</div><div class="hkpi-l">T+3 勝率</div><div class="hkpi-s">{d['t3_sample']} 筆樣本</div></div>
   <div class="hkpi"><div class="hkpi-n">{kpi_t3a}</div><div class="hkpi-l">T+3 均報酬</div><div class="hkpi-s">入選日收盤基準</div></div>
   <div class="hkpi"><div class="hkpi-n" style="color:var(--ink2);">{new_count}</div><div class="hkpi-l">今日新進榜</div><div class="hkpi-s">首次出現</div></div>
-  <div class="hkpi"><div class="hkpi-n" style="font-size:18px;color:var(--ink4);font-weight:300;font-style:italic;font-family:'Fraunces',serif;">累積中</div><div class="hkpi-l">最終信心值 ⑥</div><div class="hkpi-s">需14天資料</div></div>
+  <div class="hkpi"><div class="hkpi-n">{kpi_conf}</div><div class="hkpi-l">今日平均信心值 ⑥</div><div class="hkpi-s">{kpi_conf_sub}</div></div>
 </div>
 
 {alert_html}
@@ -677,8 +803,6 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   </div>
 
   <div class="bot-grid">
-
-    <!-- 行1：績效統計（全寬，span 4） -->
     <div class="bot-col" style="grid-column:span 4;border-bottom:1px solid var(--border);">
       <div class="panel-hd">
         <div class="ph-t">模型績效統計</div>
@@ -706,24 +830,42 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
       </div>
     </div>
 
-    <!-- 行2：產業 + 黑名單+圖 + 信心值 -->
     <div class="bot-col">
       <div class="panel-hd"><div class="ph-t">產業熱度</div><div class="ph-b">今日 vs 昨日</div></div>
       {ind_html}
     </div>
     <div class="bot-col">
       <div class="panel-hd"><div class="ph-t">黑名單警示 ④</div><div class="ph-b warn">{len(d['blacklist'])} 檔</div></div>
-      {bl_html}
+      <div class="bl-scroll">{bl_html}</div>
     </div>
     <div class="bot-col">
       <div class="panel-hd"><div class="ph-t">每日統計</div></div>
       <div class="chart-pad"><div style="position:relative;height:100px;"><canvas id="dc" role="img" aria-label="每日入選統計">每日入選統計</canvas></div></div>
     </div>
     <div class="bot-col" style="border-right:none;">
-      <div class="panel-hd"><div class="ph-t">最終信心值 ⑥</div><div class="ph-b">需14天</div></div>
-      <div class="ph-block">
-        <div class="ph-tl">累積資料中</div>
-        <div class="ph-sl">composite 50%<br>連續入選 20%<br>歷史勝率 15%<br>籌碼強度 15%</div>
+      <div class="panel-hd"><div class="ph-t">最終信心值 ⑥</div><div class="ph-b on">今日 {len(conf_map)} 檔</div></div>
+      <div class="conf-grid">
+        <div class="conf-cell">
+          <div class="conf-cell-n" style="color:{conf_color(avg_conf)};">{avg_conf if avg_conf is not None else '—'}</div>
+          <div class="conf-cell-l">今日平均</div>
+        </div>
+        <div class="conf-cell">
+          <div class="conf-cell-n" style="color:{conf_color(max(conf_map.values()) if conf_map else None)};">{max(conf_map.values()) if conf_map else '—'}</div>
+          <div class="conf-cell-l">今日最高</div>
+        </div>
+      </div>
+      <div class="conf-list" id="conf-list">
+        {''.join(f"""<div class="conf-item" onclick="openModal('{sid}')">
+          <span class="conf-item-code">{sid}</span>
+          <span class="conf-item-name">{d['stock_history'].get(str(sid),{{}}).get('name','')}</span>
+          <div class="conf-bar-wrap"><div class="conf-bar" style="width:{min(int(v),100)}%;background:{conf_color(v)};"></div></div>
+          <span class="conf-item-score" style="color:{conf_color(v)};">{v}</span>
+        </div>""" for sid, v in sorted(conf_map.items(), key=lambda x: -x[1])[:8])}
+      </div>
+      <div class="conf-formula">
+        composite×35% + 連續天數×15%<br>
+        + T+3個人勝率×15% + T+5勝率×15%<br>
+        + 法人連買天數×20%
       </div>
     </div>
 
@@ -761,7 +903,7 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   </div>
   <div id="rr-body"></div>
   <div style="padding:8px 16px;font-size:9px;color:var(--ink4);letter-spacing:1px;border-top:1px solid var(--border);background:var(--bg);">
-    綜合分 = 平均報酬 × 勝率 &nbsp;·&nbsp; 最少5次入選才列入 &nbsp;·&nbsp; 點擊查看個股歷史
+    綜合分 = 平均報酬 × 勝率 &nbsp;·&nbsp; 最少5次入選才列入 &nbsp;·&nbsp; 🏅 = 出現在報酬排行前20 &nbsp;·&nbsp; ⚠ = 黑名單警示
   </div>
 </div>
 
@@ -812,7 +954,8 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
     <div class="fl-i"><div class="fl-sq" style="background:var(--red);"></div>綜合轉強</div>
     <div class="fl-i"><div class="fl-sq" style="background:var(--grn);"></div>強勢確認</div>
     <div class="fl-i"><div class="fl-sq" style="background:var(--amb);"></div>起漲預警</div>
-    <div class="fl-i"><div class="fl-sq" style="background:rgba(196,87,42,.35);"></div>黑名單</div>
+    <div class="fl-i"><div class="fl-sq" style="background:rgba(196,87,42,.35);"></div>黑名單 ⚠</div>
+    <div class="fl-i">🏅 報酬前20</div>
   </div>
   <div class="foot-r">TWSE · TPEX · FinMind — 僅供參考，不構成投資建議 · {d['trade_days']} 個交易日 · {d['total_records']} 筆記錄</div>
 </div>
@@ -823,6 +966,8 @@ const SD = {stock_js};
 const STR = {strength_js};
 const RR = {return_rank_js};
 const BL = new Set({bl_codes});
+const RR20 = new Set({rr_top20_js});
+const CONF = {conf_map_js};
 let currentSid = '';
 let searchTab = 'search';
 let rrPeriod = 't3';
@@ -859,9 +1004,11 @@ function onSearch(q) {{
     const cs = h.composite||'—';
     const wl = getWl();
     const starred = wl.includes(sid);
+    const blTag  = BL.has(sid)  ? '<span class="tag-bl" title="黑名單">⚠</span>' : '';
+    const rrTag  = RR20.has(sid) ? '<span class="tag-rr" title="報酬前20">🏅</span>' : '';
     return `<div class="sw-item" onclick="openModal('${{sid}}')">
       <div class="sw-code">${{sid}}</div>
-      <div class="sw-name">${{d.name}}</div>
+      <div class="sw-name">${{d.name}} ${{blTag}}${{rrTag}}</div>
       <div class="sw-mkt">${{d.market}}</div>
       <div class="sw-score">${{cs}}</div>
       <span class="star-btn ${{starred?'on':''}}" onclick="event.stopPropagation();toggleStar('${{sid}}')" id="star-sw-${{sid}}">${{starred?'★':'☆'}}</span>
@@ -922,15 +1069,19 @@ function renderPageWl() {{
     const h=d.history[0]||{{}};
     const cat=h.cat||'—';
     const acc=cat==='綜合'?'#c4572a':(cat==='強勢'?'#5a9e6f':'#b07d2a');
+    const blTag  = BL.has(sid)   ? '<span class="tag-bl" title="黑名單">⚠</span>' : '';
+    const rrTag  = RR20.has(sid)  ? '<span class="tag-rr" title="報酬前20">🏅</span>' : '';
+    const conf   = CONF[sid];
     return `<div class="ne-item" onclick="openModal('${{sid}}')">
       <div class="ne-acc" style="background:${{acc}};"></div>
       <div class="ne-main">
-        <div class="ne-top"><span class="ne-code">${{sid}}</span></div>
+        <div class="ne-top"><span class="ne-code">${{sid}}</span>${{blTag}}${{rrTag}}</div>
         <div class="ne-name">${{d.name}} · ${{d.market}}</div>
       </div>
       <div class="ne-right">
         <div class="ne-score">${{h.composite||'—'}}</div>
         <div class="ne-type">${{cat}}轉強</div>
+        ${{conf!=null ? `<div class="ne-conf" style="color:${{conf>=70?'#5a9e6f':conf>=50?'#b07d2a':'#c4572a'}};">信心 ${{conf}}</div>` : ''}}
       </div>
     </div>`;
   }}).join('');
@@ -941,22 +1092,28 @@ function openModal(sid) {{
   const d = SD[sid]; if(!d) return;
   currentSid = sid;
   const bl = BL.has(sid);
+  const rr = RR20.has(sid);
+  const conf = CONF[sid];
   const suffix = d.market === 'TSE' ? '.TW' : '.TWO';
   const yahooUrl = `https://tw.stock.yahoo.com/quote/${{sid}}${{suffix}}`;
+  const blBadge = bl ? ' <span style="color:#c4572a;font-size:14px;">⚠</span>' : '';
+  const rrBadge = rr ? ' <span style="font-size:14px;">🏅</span>' : '';
   document.getElementById('modal-title').innerHTML =
     `<a href="${{yahooUrl}}" target="_blank" rel="noopener"
        style="color:var(--ink);text-decoration:none;border-bottom:1px solid rgba(196,87,42,.5);padding-bottom:1px;"
        onmouseover="this.style.borderBottomColor='#c4572a'"
        onmouseout="this.style.borderBottomColor='rgba(196,87,42,.5)'"
-    >${{sid}} ${{d.name}}</a>${{bl?' <span style=\"color:#c4572a;font-size:14px;\">⚠</span>':''}}`;
+    >${{sid}} ${{d.name}}</a>${{blBadge}}${{rrBadge}}`;
   document.getElementById('modal-sub').textContent = d.market+' · '+d.industry+' · 出現'+d.appear+'次';
   const wr = d.win_rate!==null ? d.win_rate+'%' : '—';
   const wrc = d.win_rate>=60?'#5a9e6f':(d.win_rate>=50?'#b07d2a':'#c4572a');
+  const confDisp = conf!=null ? conf : '—';
+  const confC    = conf!=null ? (conf>=70?'#5a9e6f':conf>=50?'#b07d2a':'#c4572a') : '#6a5f54';
   document.getElementById('modal-stats').innerHTML = `
     <div class="ms-cell"><div class="ms-n">${{d.appear}}</div><div class="ms-l">入選次數</div></div>
     <div class="ms-cell"><div class="ms-n" style="color:${{wrc}}">${{wr}}</div><div class="ms-l">T+3 勝率</div></div>
     <div class="ms-cell"><div class="ms-n">${{d.history[0]?.close||'—'}}</div><div class="ms-l">最近收盤</div></div>
-    <div class="ms-cell"><div class="ms-n">${{d.history[0]?.composite||'—'}}</div><div class="ms-l">最近綜合分</div></div>`;
+    <div class="ms-cell"><div class="ms-n" style="color:${{confC}}">${{confDisp}}</div><div class="ms-l">信心值 ⑥</div></div>`;
   document.getElementById('modal-tbody').innerHTML = d.history.map(h => {{
     const chip = h.cat==='綜合'?'<span class="cat-chip chip-combo">綜合</span>':
                  h.cat==='強勢'?'<span class="cat-chip chip-strong">強勢</span>':
@@ -985,14 +1142,17 @@ function showStrength(key, el) {{
   document.querySelectorAll('.sr-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
   const data = STR[key]||[];
-  document.getElementById('strength-body').innerHTML = data.map((s,i)=>`
-    <div class="sr-item" onclick="openModal('${{s.stock_id}}')">
+  document.getElementById('strength-body').innerHTML = data.map((s,i)=>{{
+    const blTag = BL.has(s.stock_id)  ? '<span class="tag-bl" title="黑名單">⚠</span>' : '';
+    const rrTag = RR20.has(s.stock_id) ? '<span class="tag-rr" title="報酬前20">🏅</span>' : '';
+    return `<div class="sr-item" onclick="openModal('${{s.stock_id}}')">
       <div class="sr-rank">${{i+1}}</div>
-      <div class="sr-code">${{s.stock_id}} <span class="star-btn" onclick="event.stopPropagation();toggleStar('${{s.stock_id}}')" id="star-sr2-${{s.stock_id}}">☆</span></div>
+      <div class="sr-code">${{s.stock_id}} ${{blTag}}${{rrTag}} <span class="star-btn" onclick="event.stopPropagation();toggleStar('${{s.stock_id}}')" id="star-sr2-${{s.stock_id}}">☆</span></div>
       <div class="sr-name">${{s.name}}<span class="sr-mkt">${{s.market}}</span></div>
       <div class="sr-cnt">${{s.cnt}}天</div>
       <div class="sr-avg">${{s.avg}}</div>
-    </div>`).join('');
+    </div>`;
+  }}).join('');
 }}
 
 // ── 報酬排行 ──
@@ -1009,9 +1169,10 @@ function renderRetRank() {{
     const avgS = s.avg >= 0 ? '+' + s.avg.toFixed(2) + '%' : s.avg.toFixed(2) + '%';
     const wrC  = s.wr >= 65 ? '#5a9e6f' : (s.wr >= 50 ? '#b07d2a' : '#c4572a');
     const medal = i===0 ? '🥇' : (i===1 ? '🥈' : (i===2 ? '🥉' : String(i+1).padStart(2,'0')));
+    const blTag = BL.has(s.stock_id) ? '<span class="tag-bl" title="黑名單警示">⚠</span>' : '';
     return `<div class="rr-item" onclick="openModal('${{s.stock_id}}')">
       <div class="rr-rank">${{medal}}</div>
-      <div class="rr-code">${{s.stock_id}}</div>
+      <div class="rr-code">${{s.stock_id}} ${{blTag}}</div>
       <div class="rr-name">${{s.name}}</div>
       <div class="rr-cnt">${{s.count}}次</div>
       <div class="rr-val" style="color:${{wrC}}">${{s.wr}}%</div>
@@ -1081,6 +1242,9 @@ def main():
     data = get_all_data(conn, imap)
     conn.close()
     print(f"  今日 {data['today']}，入選 {len(data['today_list'])} 筆，新進榜 {len(data['new_ids'])} 檔")
+    print(f"  黑名單：{len(data['blacklist'])} 檔，報酬前20：{len(data['rr_top20_ids'])} 檔")
+    if data['avg_conf'] is not None:
+        print(f"  今日平均信心值：{data['avg_conf']}")
     html = build_html(data)
     os.makedirs('docs', exist_ok=True)
     with open(OUTPUT, 'w', encoding='utf-8') as f:
