@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6282,康舒,56.0,1.08,1.65,68.8,15.22,6,34.6,24.2,64.34,True,True
+6215,和椿,126.0,5.44,1.99,70.0,18.84,2,86.9,17.2,60.51,True,True
+4916,事欣科,68.4,2.09,1.56,61.5,10.13,2,50.2,18.3,54.75,True,True
+2441,超豐,96.5,4.44,1.73,57.6,6.42,2,13.2,17.8,52.06,True,True
+4739,康普,101.0,5.76,2.15,64.0,15.3,2,96.2,40.7,50.23,True,True
