@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6187,萬潤,1225.0,0.41,1.3,56.9,8.56,5,26.1,109.0,37.87,True,True
+8091,翔名,196.0,3.16,1.26,61.5,7.11,1,35.3,43.6,25.55,True,False
+6227,茂綸,107.0,3.88,0.85,73.2,12.77,9,16.6,26.5,24.43,False,True
+5498,凱崴,72.8,0.55,1.97,53.9,5.09,0,54.6,18.8,23.98,True,False
+6245,立端,82.8,0.0,1.33,62.2,4.75,0,31.5,27.4,22.18,True,False
