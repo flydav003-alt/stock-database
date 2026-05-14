@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3045,台灣大,115.0,2.68,1.66,71.8,3.52,9,1.8,8.5,65.58,True,True
+3406,玉晶光,560.0,8.53,2.59,66.3,11.05,2,24.8,33.2,58.32,True,True
+6515,穎崴,10540.0,6.73,1.51,62.3,10.2,6,50.5,66.5,50.43,True,True
+2337,旺宏,169.0,0.6,1.57,59.5,14.2,2,153.7,70.7,46.73,True,True
+3645,達邁,112.0,3.23,2.04,65.0,14.97,1,16.4,39.7,46.26,True,True
