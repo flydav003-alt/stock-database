@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8932,智通*,100.5,4.69,1.8,59.3,11.46,2,27.2,6.2,48.1,True,True
+6613,朋億*,252.0,6.11,1.35,63.7,8.15,2,30.8,31.9,37.26,True,True
+3152,璟德,173.5,3.27,2.05,55.3,3.65,1,1.6,25.3,35.33,True,False
+6640,均華,1460.0,2.46,1.21,53.0,-2.79,1,142.3,51.8,28.04,True,False
+6227,茂綸,113.5,6.07,1.59,78.7,18.72,10,16.6,39.3,26.72,False,True
