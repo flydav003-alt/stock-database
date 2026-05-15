@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+4571,鈞興-KY,211.0,3.18,2.15,69.4,20.84,8,10.4,28.7,70.52,True,True
+2374,佳能,82.2,2.37,2.08,63.1,9.46,2,62.5,16.4,56.22,True,True
+6239,力成,248.0,8.3,2.3,65.5,14.0,1,32.5,23.4,56.0,True,True
+3413,京鼎,325.5,1.4,1.79,57.4,3.2,4,6.3,6.7,53.23,True,True
+3406,玉晶光,588.0,5.0,2.38,71.1,15.42,4,24.8,36.9,52.95,True,True
