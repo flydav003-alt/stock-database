@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8054,安國,105.5,4.46,1.9,51.0,0.19,1,47.7,5.5,42.67,True,True
+3293,鈊象,728.0,1.53,1.37,44.8,-2.8,2,14.7,0.0,33.67,True,False
+5347,世界,157.5,-0.94,1.33,52.7,5.43,4,9.6,32.9,23.56,True,False
+5291,邑昇,76.5,4.37,3.03,62.2,12.62,6,69.5,38.1,21.86,False,True
+5236,凌陽創新,179.0,9.82,2.76,69.0,13.25,5,28.1,37.7,17.25,False,True
