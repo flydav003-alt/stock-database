@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2489,瑞軒,42.55,2.53,1.96,53.6,0.33,11,14.3,9.1,58.0,True,True
+2455,全新,400.5,4.57,3.59,66.1,17.6,2,37.7,76.0,54.11,True,True
+3167,大量,780.0,-0.51,2.44,59.0,7.8,1,114.2,123.5,28.06,True,True
+2615,萬海,81.1,0.87,1.52,62.4,6.51,5,13.1,1.5,17.11,False,True
+2316,楠梓電,137.5,-1.08,1.62,62.9,14.14,2,74.3,22.2,13.75,False,True
