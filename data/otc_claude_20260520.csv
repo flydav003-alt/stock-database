@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+5309,系統電,67.7,4.64,2.17,62.1,9.02,2,7.6,11.3,47.72,True,True
+8054,安國,106.5,0.95,1.42,52.3,0.76,2,47.7,6.0,36.27,True,False
+3227,原相,223.5,2.29,1.24,59.6,6.0,2,4.2,13.2,33.33,True,False
+3709,鑫聯大投控,83.4,5.7,1.42,55.9,5.05,1,9.1,16.6,31.96,True,True
+8182,加高,36.65,2.52,1.62,51.8,-1.19,1,14.1,36.5,24.14,True,False
