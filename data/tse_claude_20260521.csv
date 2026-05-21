@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6282,康舒,53.6,5.51,1.75,59.5,6.95,4,34.6,7.2,59.51,True,True
+2421,建準,152.0,6.29,1.77,59.0,4.38,5,15.0,5.2,58.4,True,True
+2388,威盛,86.0,5.26,2.03,67.8,16.96,5,84.8,71.0,57.49,True,True
+2618,長榮航,35.3,2.92,1.55,55.1,2.01,4,18.9,1.9,54.57,True,True
+2436,偉詮電,74.8,4.18,1.55,57.0,4.65,5,30.5,13.2,47.9,True,True
