@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+4991,環宇-KY,740.0,5.71,1.1,59.7,10.87,10,67.9,90.5,51.72,True,True
+6245,立端,85.1,3.03,2.13,64.5,4.55,3,31.5,29.1,38.51,True,True
+6146,耕興,220.5,1.85,1.14,54.9,0.96,1,9.6,10.5,37.02,True,True
+3709,鑫聯大投控,87.0,4.32,1.27,60.4,8.66,2,9.1,21.3,34.54,True,True
+6548,長科*,51.4,5.76,1.27,51.0,-1.81,3,24.5,9.8,33.87,True,False
