@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3152,璟德,181.5,5.52,1.88,59.4,6.9,3,1.6,28.7,47.89,True,True
+8074,鉅橡,78.8,5.77,1.64,54.4,1.66,3,26.3,29.0,44.36,True,True
+4510,高鋒,49.6,4.2,1.11,57.2,5.07,2,45.8,17.7,44.18,True,True
+8054,安國,111.5,1.83,1.62,58.5,4.64,1,47.7,10.9,42.42,True,True
+6245,立端,88.0,3.41,1.58,69.7,7.54,4,31.5,29.4,39.93,True,True
