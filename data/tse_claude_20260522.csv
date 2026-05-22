@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3706,神達,87.8,5.15,2.4,62.7,5.39,7,31.9,8.4,68.11,True,True
+6202,盛群,60.8,3.23,2.03,61.2,9.42,7,6.9,8.2,65.63,True,True
+1773,勝一,184.5,4.24,1.69,63.5,8.28,6,31.8,23.0,64.2,True,True
+2421,建準,158.5,4.28,2.22,64.7,8.35,6,15.0,10.5,63.89,True,True
+2495,普安,44.2,8.73,2.48,64.1,10.02,7,36.7,12.5,57.69,True,True
