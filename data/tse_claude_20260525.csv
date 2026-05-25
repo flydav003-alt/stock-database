@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3706,神達,88.5,0.8,1.53,64.0,5.95,11,31.9,11.6,72.22,True,True
+2421,建準,162.5,2.52,1.57,67.8,10.52,8,15.0,22.2,66.42,True,True
+3413,京鼎,349.0,7.38,1.96,66.8,9.5,8,6.3,17.5,65.87,True,True
+3062,建漢,31.25,6.47,2.25,64.8,11.89,4,5.9,35.0,62.65,True,True
+2317,鴻海,261.0,4.4,1.69,69.3,11.32,4,29.7,33.2,61.38,True,True
