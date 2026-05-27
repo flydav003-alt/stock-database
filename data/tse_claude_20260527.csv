@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1503,士電,221.0,8.87,2.84,68.7,12.73,4,32.5,11.9,65.02,True,True
+6005,群益證,35.0,5.9,1.69,76.9,15.87,4,301.6,24.1,64.85,True,True
+1303,南亞,95.5,5.18,1.63,62.8,8.36,4,19.4,25.7,60.12,True,True
+8131,福懋科,68.9,3.45,2.31,58.3,7.26,3,40.5,9.5,58.87,True,True
+8070,長華*,50.3,1.51,1.82,65.5,6.95,4,28.1,9.9,57.66,True,True
