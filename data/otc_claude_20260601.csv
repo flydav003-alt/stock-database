@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6894,衛司特,409.0,5.01,1.22,69.0,16.73,4,88.4,22.8,44.51,True,True
+6584,南俊國際,731.0,-1.75,2.71,60.3,5.38,2,35.1,21.4,36.53,True,True
+1815,富喬,109.0,2.83,1.36,52.8,1.31,1,53.2,5.3,36.0,True,False
+8383,千附,64.2,5.94,1.8,61.4,5.43,1,38.3,43.8,35.74,True,True
+6217,中探針,305.0,5.35,1.11,59.1,7.34,2,22.2,68.0,34.02,True,True
