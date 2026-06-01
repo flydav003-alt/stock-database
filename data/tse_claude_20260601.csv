@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3706,神達,93.5,5.29,1.73,66.9,11.04,12,,21.3,75.04,True,True
+6414,樺漢,375.5,4.16,1.54,66.6,10.24,11,,39.6,59.61,True,True
+1326,台化,53.8,7.82,1.8,69.0,11.92,2,28.2,10.6,55.18,True,True
+4938,和碩,91.2,3.05,1.7,75.7,11.21,5,,16.0,46.23,True,True
+2458,義隆,167.0,3.09,1.56,69.1,12.66,3,6.3,32.0,44.9,True,True
