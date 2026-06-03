@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3526,凡甲,390.0,5.26,1.95,66.0,8.25,5,40.3,38.3,44.38,True,True
+6244,茂迪,31.25,5.22,1.24,60.5,8.29,1,19.3,18.1,42.83,True,True
+4772,台特化,305.5,2.35,1.73,51.3,0.05,1,210.1,5.7,42.79,True,True
+5536,聖暉*,1055.0,5.71,1.22,61.6,11.78,1,15.2,46.9,35.04,True,True
+3293,鈊象,789.0,-1.25,1.16,64.2,6.12,12,14.7,2.9,33.05,True,False
