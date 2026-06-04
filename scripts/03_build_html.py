@@ -1,8 +1,8 @@
 """
-03_build_html.py — 完整 Dashboard（深夜咖啡館主題）v4
+03_build_html.py — 完整 Dashboard（深夜咖啡館主題）v5
 改動：
-  - 信心值公式：T+3個人勝率×15% + T+5個人平均報酬×15%（±15%換算0~100）
-  - 信心值拆 OTC / TSE 分開計算與顯示，各用各市場全局替代值
+  - 新增 ⑤ 最佳出場時機分析（訊號×市場×分數區間×T+1/T+3/T+5）
+  - 新增 ⑦ 回測系統（前10/20/30檔，T+3平倉，OTC/TSE分開，資金曲線）
 """
 import sqlite3, os, json
 from datetime import datetime
@@ -34,6 +34,163 @@ def get_industry(sid, imap):
 def t5_avg_to_score(avg_pct):
     """T+5平均報酬% → 0~100分（±15%為上下限）"""
     return round((max(min(avg_pct, 15.0), -15.0) + 15.0) / 30.0 * 100, 1)
+
+# ══════════════════════════════════════════════════════════
+# ⑤ 出場分析計算
+# ══════════════════════════════════════════════════════════
+def calc_exit_analysis(conn):
+    """
+    計算各維度組合的最佳出場時機
+    維度：市場(TSE/OTC) × 訊號類型(綜合/強勢/起漲) × 分數區間(低/中/高)
+    指標：T+1/T+3/T+5 的勝率和平均報酬
+    """
+    rows = conn.execute('''
+        SELECT market, is_strong_confirm, is_early_breakout, composite_score,
+               close, price_t1, price_t3, price_t5
+        FROM stock_daily
+        WHERE price_t3 IS NOT NULL AND close > 0
+    ''').fetchall()
+
+    def score_band(cs):
+        cs = float(cs or 0)
+        if cs <= 65: return '低(<65)'
+        if cs <= 71: return '中(66-71)'
+        return '高(>71)'
+
+    def cat_label(sc, ec):
+        s = str(sc).upper() == 'TRUE'
+        e = str(ec).upper() == 'TRUE'
+        if s and e: return '綜合轉強'
+        if s: return '強勢確認'
+        if e: return '起漲預警'
+        return None
+
+    # acc[mkt][cat][band] = {'t1':[], 't3':[], 't5':[]}
+    acc = {}
+    for mkt, sc, ec, cs, cl, p1, p3, p5 in rows:
+        cat = cat_label(sc, ec)
+        if not cat or not cl: continue
+        band = score_band(cs)
+        acc.setdefault(mkt, {}).setdefault(cat, {}).setdefault(band, {'t1':[],'t3':[],'t5':[]})
+        d = acc[mkt][cat][band]
+        if p1: d['t1'].append((p1-cl)/cl*100)
+        if p3: d['t3'].append((p3-cl)/cl*100)
+        if p5: d['t5'].append((p5-cl)/cl*100)
+
+    def stats(lst):
+        if not lst: return None
+        wr = round(sum(1 for x in lst if x > 0) / len(lst) * 100, 1)
+        av = round(sum(lst) / len(lst), 2)
+        return {'n': len(lst), 'wr': wr, 'avg': av}
+
+    result = {}
+    for mkt in ['TSE', 'OTC']:
+        result[mkt] = {}
+        for cat in ['綜合轉強', '強勢確認', '起漲預警']:
+            result[mkt][cat] = {}
+            for band in ['低(<65)', '中(66-71)', '高(>71)']:
+                d = acc.get(mkt, {}).get(cat, {}).get(band, {'t1':[],'t3':[],'t5':[]})
+                result[mkt][cat][band] = {
+                    't1': stats(d['t1']),
+                    't3': stats(d['t3']),
+                    't5': stats(d.get('t5', [])),
+                }
+
+    # 計算「哪個組合勝率最高」排行（T+3）
+    rankings = []
+    for mkt in ['TSE', 'OTC']:
+        for cat in ['綜合轉強', '強勢確認', '起漲預警']:
+            for band in ['低(<65)', '中(66-71)', '高(>71)']:
+                s3 = result[mkt][cat][band]['t3']
+                if s3 and s3['n'] >= 5:
+                    rankings.append({
+                        'mkt': mkt, 'cat': cat, 'band': band,
+                        'n': s3['n'], 'wr': s3['wr'], 'avg': s3['avg'],
+                        'score': round(s3['wr'] * s3['avg'] / 100, 2)
+                    })
+    rankings.sort(key=lambda x: -x['wr'])
+
+    return {'matrix': result, 'rankings': rankings[:10]}
+
+# ══════════════════════════════════════════════════════════
+# ⑦ 回測計算
+# ══════════════════════════════════════════════════════════
+def calc_backtest(conn):
+    """
+    每日買入前N檔（按composite_score排序），T+3平倉
+    TSE / OTC 分開計算，初始資金各100萬
+    """
+    # 抓所有有T+3的資料，依日期分組
+    rows = conn.execute('''
+        SELECT date, market, stock_id, name, composite_score,
+               close, price_t3
+        FROM stock_daily
+        WHERE price_t3 IS NOT NULL AND close > 0 AND price_t3 > 0
+        ORDER BY date, market, composite_score DESC
+    ''').fetchall()
+
+    # 依 date+market 分組
+    day_map = {}  # (date, market) -> list of rows sorted by score
+    for dt, mkt, sid, nm, cs, cl, p3 in rows:
+        key = (dt, mkt)
+        day_map.setdefault(key, []).append({
+            'sid': sid, 'cs': float(cs or 0),
+            'cl': float(cl), 'p3': float(p3),
+            'ret': (float(p3) - float(cl)) / float(cl) * 100
+        })
+
+    def run_sim(market, top_n):
+        """回測單一市場，返回按日期排列的 (date, cum_return_pct) 列表"""
+        dates = sorted(set(k[0] for k in day_map.keys() if k[1] == market))
+        if not dates:
+            return [], {'total_ret': 0, 'win_rate': 0, 'max_dd': 0, 'trade_days': 0}
+
+        equity = 100.0  # 指數化，起始100
+        peak = 100.0
+        max_dd = 0.0
+        curve = []
+        wins = 0
+        total_trades = 0
+
+        for dt in dates:
+            stocks = day_map.get((dt, market), [])
+            if not stocks:
+                curve.append({'date': dt, 'eq': round(equity, 2)})
+                continue
+            # 取前N檔（不足就全取）
+            pool = stocks[:top_n]
+            # 等權重
+            day_ret = sum(s['ret'] for s in pool) / len(pool)
+            # 複利
+            equity = equity * (1 + day_ret / 100)
+            if equity > peak:
+                peak = equity
+            dd = (peak - equity) / peak * 100
+            if dd > max_dd:
+                max_dd = dd
+            wins += sum(1 for s in pool if s['ret'] > 0)
+            total_trades += len(pool)
+            curve.append({'date': dt, 'eq': round(equity, 2)})
+
+        total_ret = round(equity - 100, 2)
+        wr = round(wins / total_trades * 100, 1) if total_trades else 0
+        stats = {
+            'total_ret': total_ret,
+            'win_rate': wr,
+            'max_dd': round(max_dd, 2),
+            'trade_days': len(dates),
+            'total_trades': total_trades,
+        }
+        return curve, stats
+
+    result = {}
+    for mkt in ['TSE', 'OTC']:
+        result[mkt] = {}
+        for n in [10, 20, 30]:
+            curve, stats = run_sim(mkt, n)
+            result[mkt][f'n{n}'] = {'curve': curve, 'stats': stats}
+
+    return result
 
 def get_all_data(conn, imap):
     today = conn.execute('SELECT MAX(date) FROM stock_daily').fetchone()[0] or ''
@@ -112,10 +269,8 @@ def get_all_data(conn, imap):
         perf_otc = calc_perf_for(otc_rows)
 
     # ── 全局替代值，OTC / TSE 分開 ──
-    # T+3 勝率替代
     g_t3_wr_tse = (perf_tse.get('全部') or {}).get('t3_win') or 50.0
     g_t3_wr_otc = (perf_otc.get('全部') or {}).get('t3_win') or 50.0
-    # T+5 平均報酬替代 → 換算成0~100分
     g_t5_avg_tse = (perf_tse.get('全部') or {}).get('t5_avg') or 0.0
     g_t5_avg_otc = (perf_otc.get('全部') or {}).get('t5_avg') or 0.0
     g_t5_score_tse = t5_avg_to_score(g_t5_avg_tse)
@@ -180,7 +335,6 @@ def get_all_data(conn, imap):
                                    'industry':get_industry(str(sid), imap)}
 
     # ── 信心值計算（OTC / TSE 分開）──
-    # 公式：composite×35% + 連續天數×15% + T+3個人勝率×15% + T+5個人均報酬(0~100)×15% + 法人×20%
     streak_today = {s['stock_id']: s['count'] for s in streak_list}
     confidence_map = {}
     conf_otc = {}
@@ -273,6 +427,12 @@ def get_all_data(conn, imap):
         daily_map[dt][mkt]=cnt
     daily_list=sorted(daily_map.items(),reverse=True)[:10]
 
+    # ── ⑤ 出場分析 + ⑦ 回測 ──
+    print('  計算出場分析...')
+    exit_analysis = calc_exit_analysis(conn)
+    print('  計算回測...')
+    backtest = calc_backtest(conn)
+
     return {
         'today':today,'yesterday':yesterday,'today_list':today_list,'new_ids':new_ids,
         'streak_list':streak_list,'strength':strength,
@@ -289,7 +449,10 @@ def get_all_data(conn, imap):
         't3_sample':len(perf_rows),
         't3_sample_tse':len([r for r in perf_rows if r[6]=='TSE']),
         't3_sample_otc':len([r for r in perf_rows if r[6]=='OTC']),
+        'exit_analysis': exit_analysis,
+        'backtest': backtest,
     }
+
 
 def fmt_pct(v,d=1):
     if v is None: return '—'
@@ -342,6 +505,102 @@ def build_conf_panel(conf_map, avg_conf, max_conf, stock_history, label, color):
         f'<div class="conf-list">{rows_html}</div>'
     )
 
+# ══════════════════════════════════════════════════════════
+# 出場分析 HTML 建構
+# ══════════════════════════════════════════════════════════
+def build_exit_html(ea):
+    matrix = ea['matrix']
+    rankings = ea['rankings']
+
+    cats   = ['綜合轉強', '強勢確認', '起漲預警']
+    bands  = ['低(<65)', '中(66-71)', '高(>71)']
+    cat_colors = {'綜合轉強':'#c4572a','強勢確認':'#5a9e6f','起漲預警':'#b07d2a'}
+
+    def cell(s, highlight=False):
+        if not s or s['n'] < 3:
+            return '<td class="ea-nd">—</td>'
+        wr_c = '#5a9e6f' if s['wr']>=65 else ('#b07d2a' if s['wr']>=50 else '#c4572a')
+        av_c = '#5a9e6f' if s['avg']>=0 else '#c4572a'
+        av_s = fmt_pct(s['avg'])
+        bg = ' style="background:rgba(90,158,111,.07);"' if highlight else ''
+        return f'<td class="ea-cell"{bg}><span style="color:{wr_c};">{s["wr"]}%</span><br><span class="ea-avg" style="color:{av_c};">{av_s}</span><br><span class="ea-n">{s["n"]}筆</span></td>'
+
+    def best_exit(mkt, cat, band):
+        """找出T+1/T+3/T+5中勝率最高的時機"""
+        d = matrix.get(mkt, {}).get(cat, {}).get(band, {})
+        best_t, best_wr = None, -1
+        for t in ['t1','t3','t5']:
+            s = d.get(t)
+            if s and s['n'] >= 3 and s['wr'] > best_wr:
+                best_wr = s['wr']
+                best_t = t
+        return best_t
+
+    html_parts = []
+
+    for mkt in ['TSE', 'OTC']:
+        mkt_color = '#c4572a' if mkt == 'TSE' else '#5a9e6f'
+        mkt_label = '上市 TSE' if mkt == 'TSE' else '上櫃 OTC'
+        html_parts.append(f'<div class="ea-mkt-block">')
+        html_parts.append(f'<div class="ea-mkt-hd" style="border-left:3px solid {mkt_color};">{mkt_label}</div>')
+
+        for cat in cats:
+            cc = cat_colors[cat]
+            html_parts.append(f'<div class="ea-cat-section">')
+            html_parts.append(f'<div class="ea-cat-hd"><span class="ea-cat-dot" style="background:{cc};"></span>{cat}</div>')
+            html_parts.append(f'<table class="ea-table"><thead><tr>')
+            html_parts.append(f'<th class="ea-th-band">分數區間</th><th>T+1出場</th><th>T+3出場</th><th>T+5出場</th><th class="ea-th-best">最佳出場</th>')
+            html_parts.append(f'</tr></thead><tbody>')
+
+            for band in bands:
+                best_t = best_exit(mkt, cat, band)
+                d = matrix.get(mkt, {}).get(cat, {}).get(band, {})
+                s1, s3, s5 = d.get('t1'), d.get('t3'), d.get('t5')
+                best_label = {'t1':'T+1','t3':'T+3','t5':'T+5'}.get(best_t,'—')
+                best_color = '#5a9e6f' if best_t else '#6a5f54'
+
+                band_short = band.replace('(<65)','').replace('(66-71)','').replace('(>71)','')
+                html_parts.append(f'<tr>')
+                html_parts.append(f'<td class="ea-band">{band_short}</td>')
+                html_parts.append(cell(s1, best_t=='t1'))
+                html_parts.append(cell(s3, best_t=='t3'))
+                html_parts.append(cell(s5, best_t=='t5'))
+                html_parts.append(f'<td class="ea-best" style="color:{best_color};">{best_label}</td>')
+                html_parts.append(f'</tr>')
+
+            html_parts.append('</tbody></table></div>')
+        html_parts.append('</div>')
+
+    # 勝率排行榜
+    html_parts.append('<div class="ea-rank-section">')
+    html_parts.append('<div class="ea-rank-hd">T+3 勝率排行（前10名，至少5筆）</div>')
+    if rankings:
+        html_parts.append('<table class="ea-rank-table"><thead><tr><th>#</th><th>市場</th><th>訊號</th><th>分數區間</th><th>T+3勝率</th><th>T+3均報酬</th><th>樣本</th></tr></thead><tbody>')
+        for i, r in enumerate(rankings):
+            medal = ['🥇','🥈','🥉'][i] if i < 3 else str(i+1)
+            mkt_c = '#c4572a' if r['mkt']=='TSE' else '#5a9e6f'
+            cat_c = cat_colors.get(r['cat'],'#e8d9bc')
+            wr_c  = '#5a9e6f' if r['wr']>=65 else ('#b07d2a' if r['wr']>=50 else '#c4572a')
+            av_c  = '#5a9e6f' if r['avg']>=0 else '#c4572a'
+            band_short = r['band'].replace('(<65)','').replace('(66-71)','').replace('(>71)','')
+            html_parts.append(
+                f'<tr><td class="ea-r-medal">{medal}</td>'
+                f'<td><span class="ea-r-mkt" style="color:{mkt_c};">{r["mkt"]}</span></td>'
+                f'<td><span class="ea-r-cat" style="color:{cat_c};">{r["cat"]}</span></td>'
+                f'<td class="ea-r-band">{band_short}</td>'
+                f'<td style="color:{wr_c};font-family:\'DM Mono\',monospace;font-weight:500;">{r["wr"]}%</td>'
+                f'<td style="color:{av_c};font-family:\'DM Mono\',monospace;">{fmt_pct(r["avg"])}</td>'
+                f'<td style="color:var(--ink3);font-family:\'DM Mono\',monospace;">{r["n"]}</td>'
+                f'</tr>'
+            )
+        html_parts.append('</tbody></table>')
+    else:
+        html_parts.append('<div class="no-data">樣本累積中（至少需要5筆）</div>')
+    html_parts.append('</div>')
+
+    return ''.join(html_parts)
+
+
 def build_html(d):
     now_str       = datetime.now().strftime('%Y/%m/%d %H:%M')
     today_display = d['today'].replace('-','/') if d['today'] else '—'
@@ -352,7 +611,6 @@ def build_html(d):
     kpi_t3w = f'<span style="color:{wc(t3_win)};">{t3_win}%</span>' if t3_win else '<span style="color:#6a5f54;font-size:20px;font-style:italic;">累積中</span>'
     kpi_t3a = f'<span style="color:{ac(t3_avg)};">{fmt_pct(t3_avg)}</span>' if t3_avg is not None else '<span style="color:#6a5f54;font-size:20px;font-style:italic;">累積中</span>'
 
-    # Hero 信心值（顯示 OTC 平均，因為 OTC 先到）
     hero_conf = d['avg_conf_otc'] if d['avg_conf_otc'] is not None else d['avg_conf_tse']
     if hero_conf is not None:
         kpi_conf     = f'<span style="color:{conf_color(hero_conf)};">{hero_conf}</span>'
@@ -365,11 +623,9 @@ def build_html(d):
     rr_top20_ids = d['rr_top20_ids']
     conf_map     = d['confidence_map']
 
-    # 信心值面板
     conf_otc_html = build_conf_panel(d['conf_otc'],d['avg_conf_otc'],d['max_conf_otc'],d['stock_history'],'上櫃 OTC','#5a9e6f')
     conf_tse_html = build_conf_panel(d['conf_tse'],d['avg_conf_tse'],d['max_conf_tse'],d['stock_history'],'上市 TSE','#c4572a')
 
-    # 過熱警示
     hot=[s for s in d['streak_list'] if s['count']>=5]
     alert_html=''
     if hot:
@@ -383,7 +639,6 @@ def build_html(d):
         if s: return '強勢','#5a9e6f'
         return '起漲','#b07d2a'
 
-    # 新進榜
     new_rows=''; shown=0
     for r in d['today_list']:
         sid=r['stock_id']
@@ -419,7 +674,6 @@ def build_html(d):
     if today_count>shown:
         new_rows+=f'<div class="more-hint">還有 {today_count-shown} 檔 · 強度排行查看全部</div>'
 
-    # 連續入選
     streak_rows=''
     for i,s in enumerate(d['streak_list'][:10]):
         sid=s['stock_id']
@@ -437,7 +691,6 @@ def build_html(d):
           <div class="st-days" style="color:{dc};">{s['count']}</div>
         </div>'''
 
-    # 績效
     phtml_tse  = perf_row('綜合轉強',d['perf_tse'].get('綜合轉強'),'#c4572a')
     phtml_tse += perf_row('強勢確認',d['perf_tse'].get('強勢確認'),'#5a9e6f')
     phtml_tse += perf_row('起漲預警',d['perf_tse'].get('起漲預警'),'#b07d2a')
@@ -447,7 +700,6 @@ def build_html(d):
     phtml_otc += perf_row('起漲預警',d['perf_otc'].get('起漲預警'),'#b07d2a')
     phtml_otc += perf_row('全部合計',d['perf_otc'].get('全部'),'#5a5048')
 
-    # 產業熱度
     max_ind=max((x['today'] for x in d['industry_heat']),default=1)
     ind_html=''
     for ind in d['industry_heat'][:9]:
@@ -463,7 +715,6 @@ def build_html(d):
           <div class="ind-d" style="color:{dc2};">{ds}</div>
         </div>'''
 
-    # 黑名單
     bl_html=''
     for b in d['blacklist']:
         bl_html+=f'''<div class="bl-item">
@@ -479,7 +730,6 @@ def build_html(d):
         </div>'''
     if not bl_html: bl_html='<div class="no-data">目前無黑名單（資料累積中）</div>'
 
-    # 強度排行
     def strength_rows_html(key):
         out=''
         for i,s in enumerate(d['strength'].get(key,[])[:20]):
@@ -494,6 +744,13 @@ def build_html(d):
               <div class="sr-avg">{s['avg']}</div>
             </div>'''
         return out
+
+    # ── 出場分析 HTML ──
+    exit_html = build_exit_html(d['exit_analysis'])
+
+    # ── 回測資料序列化 ──
+    bt = d['backtest']
+    bt_js = json.dumps(bt, ensure_ascii=False)
 
     stock_js       = json.dumps(d['stock_history'],ensure_ascii=False)
     strength_js    = json.dumps(d['strength'],ensure_ascii=False)
@@ -680,6 +937,51 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
 .sr-avg{{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--ink2);text-align:right;}}
 .star-btn{{font-size:13px;color:var(--ink4);cursor:pointer;transition:.15s;user-select:none;}}
 .star-btn.on{{color:#f0c040;}}
+/* ══ 出場分析 ══ */
+.ea-page-wrap{{padding:20px 24px;max-width:1100px;}}
+.ea-mkt-block{{margin-bottom:28px;}}
+.ea-mkt-hd{{font-size:11px;letter-spacing:2px;color:var(--ink2);padding:6px 0 10px 10px;font-weight:500;margin-bottom:4px;}}
+.ea-cat-section{{margin-bottom:16px;background:var(--card);border:1px solid var(--border);}}
+.ea-cat-hd{{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:10px;letter-spacing:1px;color:var(--ink3);border-bottom:1px solid var(--border);background:var(--bg2);}}
+.ea-cat-dot{{width:5px;height:5px;border-radius:50%;flex-shrink:0;}}
+.ea-table{{width:100%;border-collapse:collapse;}}
+.ea-table th{{padding:6px 12px;font-size:9px;letter-spacing:1px;color:var(--ink4);border-bottom:1px solid var(--border2);text-align:center;font-weight:400;}}
+.ea-th-band{{text-align:left;width:80px;}}
+.ea-th-best{{width:60px;}}
+.ea-table tr:hover td{{background:var(--bg2);}}
+.ea-band{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);padding:8px 12px;border-bottom:1px solid var(--border2);white-space:nowrap;}}
+.ea-cell{{padding:7px 10px;border-bottom:1px solid var(--border2);text-align:center;font-size:10px;line-height:1.5;}}
+.ea-avg{{font-family:'DM Mono',monospace;font-size:9px;}}
+.ea-n{{font-size:8px;color:var(--ink4);}}
+.ea-nd{{padding:7px 10px;border-bottom:1px solid var(--border2);text-align:center;font-size:10px;color:var(--ink5);}}
+.ea-best{{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:7px 10px;border-bottom:1px solid var(--border2);text-align:center;}}
+.ea-rank-section{{margin-top:24px;background:var(--card);border:1px solid var(--border);}}
+.ea-rank-hd{{padding:10px 16px;font-size:10px;letter-spacing:1px;color:var(--ink3);border-bottom:1px solid var(--border);background:var(--bg2);}}
+.ea-rank-table{{width:100%;border-collapse:collapse;}}
+.ea-rank-table th{{padding:6px 12px;font-size:9px;color:var(--ink4);border-bottom:1px solid var(--border2);text-align:left;font-weight:400;letter-spacing:1px;}}
+.ea-rank-table td{{padding:8px 12px;border-bottom:1px solid var(--border2);font-size:11px;}}
+.ea-rank-table tr:last-child td{{border-bottom:none;}}
+.ea-rank-table tr:hover td{{background:var(--bg2);}}
+.ea-r-medal{{font-size:13px;width:28px;}}
+.ea-r-mkt{{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;}}
+.ea-r-cat{{font-size:10px;}}
+.ea-r-band{{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);}}
+.ea-note{{padding:8px 16px;font-size:9px;color:var(--ink4);letter-spacing:1px;border-top:1px solid var(--border);background:var(--bg);}}
+/* ══ 回測 ══ */
+.bt-page-wrap{{padding:20px 24px;}}
+.bt-mkt-tabs{{display:flex;border-bottom:1px solid var(--border);background:var(--card);margin-bottom:0;}}
+.bt-mkt-tab{{height:38px;display:flex;align-items:center;padding:0 18px;font-size:10px;letter-spacing:1px;color:rgba(232,217,188,.5);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;}}
+.bt-mkt-tab.on{{color:var(--ink2);border-bottom-color:var(--red);}}
+.bt-n-tabs{{display:flex;gap:0;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg2);align-items:center;}}
+.bt-n-btn{{font-family:'DM Mono',monospace;font-size:9px;padding:3px 10px;border:1px solid var(--border);color:var(--ink4);cursor:pointer;margin-right:6px;transition:.15s;}}
+.bt-n-btn.on{{border-color:var(--red);color:var(--red);}}
+.bt-n-label{{font-size:9px;color:var(--ink4);letter-spacing:1px;margin-left:4px;}}
+.bt-kpi-row{{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin:16px 0 0;}}
+.bt-kpi{{background:var(--card);padding:14px 16px;}}
+.bt-kpi-n{{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;}}
+.bt-kpi-l{{font-size:9px;letter-spacing:1px;color:var(--ink3);margin-top:4px;}}
+.bt-chart-wrap{{position:relative;height:220px;background:var(--card);border:1px solid var(--border);border-top:none;padding:12px 16px 8px;}}
+.bt-note{{font-size:9px;color:var(--ink4);letter-spacing:1px;padding:8px 16px;border-top:1px solid var(--border);background:var(--bg2);}}
 /* Modal */
 .modal-backdrop{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:flex-start;justify-content:center;padding-top:36px;overflow-y:auto;}}
 .modal-backdrop.show{{display:flex;}}
@@ -720,8 +1022,8 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
     <div class="nav-btn" onclick="showPage('strength',this)">強度排行</div>
     <div class="nav-btn" onclick="showPage('retrank',this)">報酬排行 ★</div>
     <div class="nav-btn" onclick="showPage('watchlist',this)">自選股</div>
-    <div class="nav-btn" onclick="showPage('exit',this)">出場分析</div>
-    <div class="nav-btn" onclick="showPage('backtest',this)">回測</div>
+    <div class="nav-btn" onclick="showPage('exit',this)">出場分析 ⑤</div>
+    <div class="nav-btn" onclick="showPage('backtest',this)">回測 ⑦</div>
   </nav>
   <div class="hdr-right">
     <div class="live-ind"><div class="live-dot"></div>LIVE</div>
@@ -829,19 +1131,30 @@ body{{background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-seri
   <div class="panel-hd"><div class="ph-t">自選股清單</div></div>
   <div id="page-wl-body"></div>
 </div>
-<!-- ════ EXIT ════ -->
+<!-- ════ EXIT ⑤ ════ -->
 <div class="page" id="page-exit">
-  <div style="padding:24px 16px;text-align:center;margin:20px;border:1px dashed var(--border);">
-    <div style="font-size:12px;color:var(--ink3);font-weight:500;">最佳出場時機分析</div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:5px;line-height:1.8;">按訊號類型 / 市場 / 分數區間分析 T+1/T+3/T+5 最佳出場<br>預計累積30個交易日後啟用</div>
+  <div class="ea-page-wrap">
+    {exit_html}
   </div>
+  <div class="ea-note">勝率：T+3出場正報酬比例 &nbsp;·&nbsp; 均報酬：T+3平均% &nbsp;·&nbsp; 綠底 = 最佳出場時機 &nbsp;·&nbsp; 至少3筆才顯示數據</div>
 </div>
-<!-- ════ BACKTEST ════ -->
+<!-- ════ BACKTEST ⑦ ════ -->
 <div class="page" id="page-backtest">
-  <div style="padding:24px 16px;text-align:center;margin:20px;border:1px dashed var(--border);">
-    <div style="font-size:12px;color:var(--ink3);font-weight:500;">回測系統 + 資金曲線</div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:5px;line-height:1.8;">模擬每日買入前N檔、T+3平倉，累積報酬曲線<br>預計累積30個交易日後啟用</div>
+  <div class="bt-mkt-tabs">
+    <div class="bt-mkt-tab on" id="bt-tse" onclick="btSetMkt('TSE',this)">上市 TSE</div>
+    <div class="bt-mkt-tab" id="bt-otc" onclick="btSetMkt('OTC',this)">上櫃 OTC</div>
   </div>
+  <div class="bt-n-tabs">
+    <div class="bt-n-btn on" id="bt-n10" onclick="btSetN('n10',this)">前10檔</div>
+    <div class="bt-n-btn" id="bt-n20" onclick="btSetN('n20',this)">前20檔</div>
+    <div class="bt-n-btn" id="bt-n30" onclick="btSetN('n30',this)">前30檔</div>
+    <span class="bt-n-label">等權重 · T+3平倉 · 初始指數100</span>
+  </div>
+  <div class="bt-page-wrap">
+    <div class="bt-kpi-row" id="bt-kpi-row"></div>
+    <div class="bt-chart-wrap"><canvas id="bt-chart"></canvas></div>
+  </div>
+  <div class="bt-note">回測說明：以每日入選股（按分數排序）等權重買入，T+3收盤平倉，不足N檔則全買。結果僅供參考，不考慮交易成本與滑價。</div>
 </div>
 <!-- ════ MODAL ════ -->
 <div class="modal-backdrop" id="modal-bd" onclick="if(event.target===this)closeModal()">
@@ -880,7 +1193,9 @@ const RR={return_rank_js};
 const BL=new Set({bl_codes});
 const RR20=new Set({rr_top20_js});
 const CONF={conf_map_js};
+const BT={bt_js};
 let currentSid='',searchTab='search',rrPeriod='t3',rrMkt='otc';
+let btMkt='TSE',btN='n10',btChartInst=null;
 function showPage(id,el){{
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
@@ -889,6 +1204,7 @@ function showPage(id,el){{
   if(id==='watchlist')renderPageWl();
   if(id==='overview')initSearch();
   if(id==='retrank')renderRetRank();
+  if(id==='backtest')renderBacktest();
 }}
 function initSearch(){{onSearch('');renderWlSide();}}
 function onSearch(q){{
@@ -1051,6 +1367,82 @@ function renderRetRank(){{
 }}
 function showRetRank(period,el){{rrPeriod=period;document.querySelectorAll('.rr-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');renderRetRank();}}
 function showRetMkt(mkt,el){{rrMkt=mkt;document.querySelectorAll('.rr-mkt-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');renderRetRank();}}
+/* ══ 回測 JS ══ */
+function btSetMkt(mkt,el){{
+  btMkt=mkt;
+  document.querySelectorAll('.bt-mkt-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderBacktest();
+}}
+function btSetN(n,el){{
+  btN=n;
+  document.querySelectorAll('.bt-n-btn').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderBacktest();
+}}
+function renderBacktest(){{
+  const data=BT[btMkt]&&BT[btMkt][btN];
+  if(!data||!data.curve||!data.curve.length){{
+    document.getElementById('bt-kpi-row').innerHTML='<div style="padding:20px;color:var(--ink4);font-size:11px;">資料不足</div>';
+    return;
+  }}
+  const s=data.stats;
+  const retC=s.total_ret>=0?'#5a9e6f':'#c4572a';
+  const wrC=s.win_rate>=60?'#5a9e6f':(s.win_rate>=50?'#b07d2a':'#c4572a');
+  const ddC=s.max_dd>15?'#c4572a':(s.max_dd>8?'#b07d2a':'#5a9e6f');
+  const retS=(s.total_ret>=0?'+':'')+s.total_ret.toFixed(2)+'%';
+  document.getElementById('bt-kpi-row').innerHTML=`
+    <div class="bt-kpi"><div class="bt-kpi-n" style="color:${{retC}}">${{retS}}</div><div class="bt-kpi-l">累積報酬</div></div>
+    <div class="bt-kpi"><div class="bt-kpi-n" style="color:${{wrC}}">${{s.win_rate}}%</div><div class="bt-kpi-l">T+3 勝率</div></div>
+    <div class="bt-kpi"><div class="bt-kpi-n" style="color:${{ddC}}">-${{s.max_dd.toFixed(1)}}%</div><div class="bt-kpi-l">最大回撤</div></div>
+    <div class="bt-kpi"><div class="bt-kpi-n" style="color:var(--ink2)">${{s.trade_days}}</div><div class="bt-kpi-l">交易日</div></div>
+    <div class="bt-kpi"><div class="bt-kpi-n" style="color:var(--ink3)">${{s.total_trades}}</div><div class="bt-kpi-l">總交易筆數</div></div>`;
+  const labels=data.curve.map(p=>p.date.slice(5));
+  const vals=data.curve.map(p=>p.eq);
+  if(btChartInst){{btChartInst.destroy();btChartInst=null;}}
+  const ctx=document.getElementById('bt-chart');
+  if(!ctx)return;
+  btChartInst=new Chart(ctx.getContext('2d'),{{
+    type:'line',
+    data:{{
+      labels,
+      datasets:[{{
+        label:'資金指數',
+        data:vals,
+        borderColor:'#c4572a',
+        backgroundColor:'rgba(196,87,42,.08)',
+        borderWidth:1.5,
+        pointRadius:0,
+        fill:true,
+        tension:0.3,
+      }}]
+    }},
+    options:{{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{{
+        legend:{{display:false}},
+        tooltip:{{
+          backgroundColor:'rgba(28,21,16,.95)',
+          titleColor:'#c4a06e',
+          bodyColor:'#e8d9bc',
+          borderColor:'rgba(232,217,188,.15)',
+          borderWidth:1,
+          callbacks:{{
+            label:ctx=>`指數：${{ctx.parsed.y.toFixed(2)}} (${{ctx.parsed.y>=100?'+':''}}${{(ctx.parsed.y-100).toFixed(2)}}%)`,
+          }}
+        }}
+      }},
+      scales:{{
+        x:{{ticks:{{color:'rgba(232,217,188,.4)',font:{{size:8}},maxTicksLimit:10}},grid:{{display:false}},border:{{color:'rgba(232,217,188,.12)'}}}},
+        y:{{
+          ticks:{{color:'rgba(232,217,188,.4)',font:{{size:8}},maxTicksLimit:5,callback:v=>v.toFixed(0)}},
+          grid:{{color:'rgba(232,217,188,.06)'}},
+          border:{{display:false}}
+        }}
+      }}
+    }}
+  }});
+}}
 window.addEventListener('load',()=>{{
   initSearch();
   const wl=getWl();
@@ -1099,6 +1491,12 @@ def main():
     print(f"  黑名單：{len(data['blacklist'])} 檔，報酬前20：{len(data['rr_top20_ids'])} 檔")
     if data['conf_otc']: print(f"  OTC 信心值：{len(data['conf_otc'])} 檔，平均 {data['avg_conf_otc']}")
     if data['conf_tse']: print(f"  TSE 信心值：{len(data['conf_tse'])} 檔，平均 {data['avg_conf_tse']}")
+    ea = data['exit_analysis']
+    print(f"  出場分析排行：{len(ea['rankings'])} 組")
+    bt = data['backtest']
+    for mkt in ['TSE','OTC']:
+        s = bt[mkt]['n10']['stats']
+        print(f"  回測 {mkt} 前10檔：累積{'+' if s['total_ret']>=0 else ''}{s['total_ret']}% 勝率{s['win_rate']}% 最大回撤{s['max_dd']}%")
     html = build_html(data)
     os.makedirs('docs', exist_ok=True)
     with open(OUTPUT, 'w', encoding='utf-8') as f:
