@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2404,漢唐,1230.0,6.49,1.51,66.1,14.89,3,102.2,48.4,63.54,True,True
+6139,亞翔,825.0,5.23,2.08,64.0,12.35,4,70.6,58.3,52.7,True,True
+3406,玉晶光,659.0,8.75,1.6,73.8,18.61,3,24.8,48.4,45.0,True,True
+2406,國碩,38.5,1.32,2.63,66.3,16.28,0,143.3,25.0,28.26,True,False
+6691,洋基工程,635.0,-1.55,1.62,48.2,-0.85,0,66.7,13.2,25.82,True,False
