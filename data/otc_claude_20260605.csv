@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6121,新普,422.5,3.05,1.4,74.5,10.62,7,4.0,23.5,43.66,True,True
+5904,寶雅,577.0,-0.86,1.43,58.9,2.03,2,,14.3,31.11,True,False
+3217,優群,187.5,-1.57,1.13,51.7,1.24,6,,22.5,30.42,True,False
+8932,智通*,102.0,2.0,1.21,55.1,5.03,2,,24.5,30.2,True,False
+6761,穩得,219.0,3.06,1.22,58.3,6.95,1,,38.2,27.91,True,True
