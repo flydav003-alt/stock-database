@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8054,安國,102.5,1.99,1.68,46.3,-2.74,1,382.5,3.7,41.17,True,True
+5904,寶雅,582.0,0.87,1.88,60.8,2.67,3,,15.0,40.53,True,True
+8932,智通*,100.5,-1.47,1.47,52.4,3.01,3,,20.8,30.8,True,False
+6174,安碁,44.5,1.83,1.13,59.1,6.32,3,,98.7,20.32,True,False
+3093,港建*,66.0,3.12,1.92,64.7,17.33,3,,14.2,17.92,False,True
