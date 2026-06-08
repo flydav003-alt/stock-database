@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3023,信邦,322.5,-1.98,1.77,59.9,5.68,5,17.5,18.3,46.15,True,True
+8021,尖點,460.0,0.44,1.55,55.7,6.48,3,86.3,57.0,44.51,True,True
+8996,高力,1210.0,7.56,1.67,59.3,9.08,4,40.0,31.4,19.82,False,True
+3376,新日興,236.5,-0.21,2.34,62.6,12.65,3,,11.8,16.68,False,True
+4739,康普,118.5,0.42,1.62,68.9,18.59,0,,49.6,4.13,True,False
