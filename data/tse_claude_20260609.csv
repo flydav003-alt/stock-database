@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6414,樺漢,401.0,7.8,1.66,68.6,12.83,1,35.3,44.2,41.05,True,True
+2458,義隆,161.0,2.88,1.63,57.8,4.79,0,3.6,21.1,23.6,True,False
+2241,艾姆勒,39.7,2.06,1.96,64.9,16.81,4,40.2,46.5,22.2,False,True
+4927,泰鼎-KY,54.6,7.48,1.51,52.5,1.23,0,4.2,20.3,18.93,True,False
+2645,長榮航太,173.5,4.52,1.67,61.4,8.1,4,,14.9,17.65,False,True
