@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3088,艾訊,139.5,2.57,1.87,61.7,4.45,5,49.0,52.8,40.55,True,True
+6104,創惟,100.0,-2.44,2.31,50.3,-0.05,2,1.7,12.7,35.65,True,False
+3691,碩禾,163.0,-2.4,1.66,58.3,8.52,2,,38.1,29.3,True,True
+6613,朋億*,260.5,2.16,1.37,54.8,2.52,3,81.7,20.9,28.09,True,False
+6223,旺矽,5770.0,-1.95,1.26,52.6,1.24,6,57.8,24.9,25.65,True,False
