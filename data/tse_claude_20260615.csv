@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3576,聯合再生,21.0,6.06,1.64,62.9,16.13,4,27.6,24.3,62.32,True,True
+5471,松翰,57.4,5.9,1.96,65.0,11.43,7,27.3,39.3,58.91,True,True
+3413,京鼎,322.0,4.72,1.98,53.2,1.67,2,16.7,2.2,52.13,True,True
+4952,凌通,58.5,8.74,2.04,65.1,13.74,3,20.4,40.1,48.54,True,True
+6271,同欣電,244.0,2.31,2.1,59.5,11.66,2,7.6,33.3,43.67,True,True
