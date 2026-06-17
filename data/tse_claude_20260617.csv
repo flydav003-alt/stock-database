@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3596,智易,193.5,3.75,1.59,58.6,4.06,8,4.2,9.3,63.21,True,True
+1513,中興電,172.0,2.08,1.56,57.7,5.12,2,3.6,12.4,48.79,True,True
+3034,聯詠,515.0,3.0,1.63,66.0,5.71,6,9.4,24.1,47.79,True,True
+2489,瑞軒,48.6,5.88,1.64,56.6,6.3,3,9.0,8.8,42.98,True,True
+2618,長榮航,42.55,7.04,2.23,78.3,16.46,7,22.1,20.5,27.99,False,True
