@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8086,宏捷科,162.5,1.56,1.12,55.5,3.26,5,37.0,9.4,47.16,True,True
+5483,中美晶,182.5,4.29,1.52,64.9,17.2,2,5.7,46.6,38.06,True,True
+6435,大中,289.0,6.06,1.42,61.5,10.36,1,22.2,61.9,35.46,True,True
+8358,金居,640.0,1.27,0.86,63.6,18.05,9,41.4,74.1,26.19,False,True
+3680,家登,517.0,3.4,1.28,49.3,-4.28,2,16.0,20.2,23.63,True,False
