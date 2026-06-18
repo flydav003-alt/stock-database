@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2337,旺宏,169.0,4.64,1.87,58.0,8.51,1,175.8,40.2,56.37,True,True
+1513,中興電,176.5,2.62,1.97,61.7,7.45,3,3.6,15.0,54.85,True,True
+2388,威盛,81.4,8.24,2.7,61.5,9.34,2,88.1,23.0,48.29,True,True
+3583,辛耘,889.0,7.5,2.06,58.4,2.93,6,1.5,10.0,46.36,True,True
+1590,亞德客-KY,1380.0,4.55,1.69,54.7,0.21,4,40.4,8.2,43.46,True,True
