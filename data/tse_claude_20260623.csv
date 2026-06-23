@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3591,艾笛森,27.55,6.17,3.46,68.1,11.71,1,,8.9,45.52,True,True
+1514,亞力,127.0,0.0,1.59,54.9,2.98,2,,11.9,44.39,True,True
+2359,所羅門,140.5,2.93,1.58,55.1,1.98,1,,20.1,42.66,True,True
+2352,佳世達,31.1,-1.11,1.86,57.7,5.74,5,,19.6,42.3,True,True
+4961,天鈺,174.5,-1.69,1.67,55.6,2.12,1,,3.3,40.3,True,True
