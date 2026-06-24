@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2363,矽統,69.2,5.01,1.61,61.4,9.85,6,88.8,27.9,55.85,True,True
+1326,台化,57.7,8.66,1.55,64.1,16.24,1,15.5,16.8,40.54,True,True
+1560,中砂,749.0,6.24,2.02,62.9,9.12,9,17.8,43.8,31.29,False,True
+6691,洋基工程,758.0,6.46,1.64,65.9,14.69,4,82.4,12.1,22.44,False,True
+3591,艾笛森,27.3,-0.91,2.77,66.3,10.12,0,5.2,15.2,15.11,True,False
