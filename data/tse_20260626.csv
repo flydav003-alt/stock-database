@@ -1,0 +1,5 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+3189,景碩,797.0,1.61,-1.85,16.1,536.59,62.9,10,33.0,2573040.0,2612572.0,-1010966.0,7236986.0,True,True,69.2,53.03,60.79,54.8
+6139,亞翔,878.0,1.82,0.34,10.66,90.42,61.7,5,103.3,2859210.0,379000.0,6221492.0,590000.0,True,True,41.09,63.43,52.71,31.8
+1313,聯成,12.35,1.72,-1.59,10.82,3.16,62.9,0,4.7,-2930566.0,0.0,-6063947.0,0.0,False,True,0.0,45.87,23.85,8.8
+3059,華晶科,48.35,2.07,-1.12,4.32,10.27,56.5,0,1.8,-4628700.0,0.0,-2887418.0,-2000.0,False,True,0.0,26.42,13.74,24.9
