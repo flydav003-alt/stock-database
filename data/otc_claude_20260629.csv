@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8936,國統,59.9,1.87,1.42,60.1,8.19,1,11.2,21.3,33.98,True,False
+1595,川寶,79.0,1.28,1.64,49.9,-3.47,2,173.8,21.4,28.77,True,False
+6121,新普,418.0,0.6,1.73,57.4,3.1,2,4.0,16.3,24.85,True,False
+4939,亞電,62.3,2.64,1.17,58.6,11.47,1,21.2,43.2,23.71,True,False
+3293,鈊象,769.0,3.22,1.04,51.5,0.36,8,12.0,1.9,15.18,False,True
