@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3706,神達,86.4,3.47,1.9,49.8,-1.41,3,49.3,5.4,43.14,True,False
+3023,信邦,325.0,6.04,1.93,54.6,2.77,2,17.5,18.2,42.09,True,True
+3413,京鼎,314.0,5.02,1.72,49.9,-0.86,1,16.7,2.1,41.9,True,False
+2412,中華電,142.0,-0.7,1.56,50.2,0.42,6,5.4,3.6,39.5,True,False
+6691,洋基工程,795.0,0.25,1.51,69.6,17.04,3,82.4,24.6,18.4,False,True
