@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2645,長榮航太,185.5,7.85,2.68,69.1,10.14,5,10.6,20.1,62.23,True,True
+3413,京鼎,330.5,5.25,2.88,56.8,4.16,1,16.7,6.1,55.19,True,True
+2467,志聖,620.0,8.96,1.78,56.2,4.01,3,74.6,11.9,41.87,True,True
+3583,辛耘,904.0,4.99,1.86,58.6,5.75,2,1.5,17.1,40.53,True,True
+3045,台灣大,116.5,-1.27,1.69,48.4,0.25,4,3.9,4.0,39.41,True,False
