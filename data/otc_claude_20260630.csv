@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3293,鈊象,789.0,2.6,1.67,56.9,2.68,9,12.0,4.4,53.57,True,True
+3227,原相,238.0,1.93,1.91,60.2,5.65,7,10.3,15.3,41.96,True,True
+3551,世禾,204.0,4.88,1.6,52.3,0.95,2,21.5,4.3,41.32,True,True
+8069,元太,214.5,0.0,2.54,58.2,1.41,3,1.0,53.8,34.05,True,True
+3131,弘塑,3630.0,1.97,1.23,60.1,10.72,4,7.2,26.5,33.25,True,False
