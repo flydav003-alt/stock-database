@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6526,達發,703.0,4.93,1.56,56.3,4.25,13,12.9,27.6,64.14,True,True
+3706,神達,91.3,4.58,2.26,58.0,3.55,5,49.3,12.2,62.06,True,True
+3005,神基,106.5,5.45,2.35,59.2,2.82,3,15.1,9.1,57.06,True,True
+2027,大成鋼,41.5,2.85,2.58,51.8,-1.27,3,42.5,10.1,54.52,True,True
+2467,志聖,646.0,4.19,2.06,59.7,7.98,5,74.6,6.1,51.71,True,True
