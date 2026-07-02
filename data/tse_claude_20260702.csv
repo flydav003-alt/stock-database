@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8464,億豐,380.5,6.58,1.66,70.0,12.66,10,,10.6,68.39,True,True
+1210,大成,57.6,3.23,2.05,73.2,5.89,5,,9.5,57.22,True,True
+2105,正新,31.7,5.32,1.72,51.8,-1.15,5,,2.8,51.9,True,True
+1312,國喬,14.45,4.71,2.23,63.3,10.34,1,,23.5,50.97,True,True
+3022,威強電,87.0,4.95,1.73,65.4,7.67,4,,22.5,42.89,True,True
