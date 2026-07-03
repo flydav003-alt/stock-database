@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8422,可寧衛,28.35,5.78,2.54,52.0,0.9,5,199.6,0.0,63.79,True,True
+2615,萬海,82.8,4.94,2.73,57.6,1.43,4,22.9,7.5,60.0,True,True
+1312,國喬,15.1,4.5,2.43,68.3,13.85,2,5.8,25.3,58.82,True,True
+2609,陽明,52.4,2.75,2.11,53.9,0.76,5,22.2,4.6,58.5,True,True
+2105,正新,32.15,1.42,1.58,54.4,0.23,7,1.2,3.7,57.83,True,True
