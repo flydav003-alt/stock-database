@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2382,廣達,378.0,0.27,1.73,58.1,1.92,25,94.4,9.1,105.71,True,True
+1513,中興電,178.5,1.13,1.57,58.3,2.62,14,3.6,14.8,75.41,True,True
+1216,統一,77.8,1.97,1.62,64.8,4.44,12,2.7,13.2,72.16,True,True
+8070,長華*,57.2,2.14,1.92,56.5,1.34,6,26.3,17.1,59.83,True,True
+1504,東元,73.1,4.43,2.55,54.1,0.73,4,10.6,8.6,56.29,True,True
