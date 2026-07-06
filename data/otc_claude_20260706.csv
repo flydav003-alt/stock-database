@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3265,台星科,192.5,4.05,2.01,56.9,5.45,5,,3.5,46.84,True,True
+6104,創惟,105.5,0.48,1.67,55.7,3.73,6,,6.6,44.9,True,True
+6548,長科*,94.2,2.84,1.58,63.6,10.41,9,,81.9,44.29,True,True
+3551,世禾,208.5,1.21,1.88,55.5,2.94,2,,0.0,38.61,True,True
+6761,穩得,205.5,3.79,2.18,54.1,1.29,1,,0.7,38.48,True,True
