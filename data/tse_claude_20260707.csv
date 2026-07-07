@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6414,樺漢,400.0,4.17,2.73,64.1,6.05,13,57.0,13.8,72.41,True,True
+1477,聚陽,231.5,0.65,1.59,59.9,4.07,5,0.5,5.0,54.76,True,True
+1476,儒鴻,340.5,5.42,2.36,56.4,1.86,3,14.4,1.6,54.4,True,True
+2458,義隆,188.0,5.03,1.9,61.9,12.49,6,7.1,30.6,53.89,True,True
+2637,慧洋-KY,79.0,0.77,1.53,59.3,3.1,2,57.9,2.9,49.4,True,True
