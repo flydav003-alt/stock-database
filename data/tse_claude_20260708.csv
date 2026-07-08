@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2377,微星,142.0,3.65,1.71,57.6,2.42,25,,42.0,87.81,True,True
+6949,沛爾生醫-創,960.0,4.35,1.69,69.2,20.67,1,50.2,39.1,43.87,True,True
+3090,日電貿,303.5,-0.82,1.51,56.8,9.45,4,32.4,167.4,30.12,True,False
+8104,錸寶,41.75,4.24,1.93,58.7,4.0,0,,23.7,10.01,True,False
+2369,菱生,42.7,2.77,1.56,60.2,12.87,0,,39.1,8.65,True,False
