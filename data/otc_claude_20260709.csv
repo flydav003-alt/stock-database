@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8096,擎亞,166.5,-1.77,2.64,63.0,14.62,2,433.5,69.4,43.93,True,True
+3211,順達,454.0,6.2,2.49,58.7,7.94,2,20.6,12.7,39.02,True,True
+8091,翔名,295.0,5.92,1.48,61.1,12.02,1,71.7,47.5,38.42,True,True
+6223,旺矽,7080.0,9.6,0.96,58.0,11.21,6,65.1,42.0,14.81,False,True
+3362,先進光,180.0,7.14,1.72,54.4,4.08,1,,76.5,8.5,False,True
