@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+5351,鈺創,100.0,1.83,1.78,62.0,11.47,2,657.5,19.3,40.78,True,True
+6265,方土昶,54.1,2.66,1.7,52.5,-2.32,4,1209.5,20.6,29.01,True,False
+6829,千附精密,233.5,5.18,1.89,57.9,9.75,3,69.4,8.6,14.53,False,True
+3498,陽程,131.0,3.56,1.64,57.9,5.8,0,50.7,16.4,12.85,True,False
+3707,漢磊,85.5,7.55,1.51,52.7,3.8,1,,10.8,8.26,False,True
