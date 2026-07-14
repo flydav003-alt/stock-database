@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3702,大聯大,119.5,2.14,2.22,63.7,8.88,2,,8.1,51.7,True,True
+1301,台塑,63.6,5.65,2.06,64.5,20.74,1,,35.6,51.67,True,True
+9921,巨大,81.3,1.75,1.82,64.4,8.48,1,,7.4,46.0,True,True
+2103,台橡,25.0,7.3,1.84,66.6,13.42,1,,15.7,36.19,True,True
+6505,台塑化,66.2,4.91,2.11,72.5,19.03,6,,25.1,29.58,False,True
