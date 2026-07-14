@@ -1,0 +1,5 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+6613,朋億*,358.0,2.32,1.42,8.35,4.38,58.3,1,120.5,-228978.0,90000.0,-265907.0,90000.0,True,True,15.38,36.94,25.08,50.7
+6104,創惟,101.5,1.55,0.0,-0.58,2.17,49.3,0,5.7,-119886.0,0.0,-1146.0,0.0,False,True,0.0,45.6,20.52,1.0
+6829,千附精密,256.5,2.87,9.85,19.93,19.81,65.2,4,69.4,284711.0,0.0,534098.0,0.0,True,False,34.9,0.0,19.2,20.4
+5314,世紀*,68.2,1.22,5.74,9.82,7.75,56.0,6,167.9,1365384.0,11000.0,1192907.0,38000.0,True,False,34.07,0.0,18.74,0.0
