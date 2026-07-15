@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3551,世禾,225.0,9.22,2.62,66.0,12.13,2,26.1,4.9,17.63,False,True
+5536,聖暉*,1250.0,8.23,0.97,51.8,0.7,5,24.9,23.8,13.07,False,True
+3402,漢科,158.0,8.59,2.2,61.5,9.65,1,29.9,13.3,12.84,False,True
+5351,鈺創,104.5,9.77,0.75,63.3,15.72,1,657.5,14.2,8.83,False,True
+8091,翔名,283.5,3.09,0.7,55.9,6.75,2,71.7,31.6,8.39,False,True
