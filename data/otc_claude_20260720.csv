@@ -1,0 +1,2 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+4939,亞電,66.2,9.97,1.43,58.2,6.71,2,44.2,72.6,6.03,False,True
