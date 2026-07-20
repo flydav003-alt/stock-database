@@ -1,0 +1,4 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+9939,宏全,128.5,1.59,2.39,0.56,3.27,56.6,8,12.1,18473.0,151784.0,838802.0,320784.0,True,True,44.7,75.93,60.94,2.4
+6414,樺漢,405.0,1.55,2.53,5.81,14.39,60.8,23,57.0,120448.0,0.0,1335887.0,58000.0,True,False,124.13,0.0,59.58,23.5
+1476,儒鴻,336.5,1.52,0.9,1.85,9.32,52.4,3,14.4,516619.0,-318957.0,1641929.0,-662884.0,False,True,0.0,74.7,38.84,5.2
