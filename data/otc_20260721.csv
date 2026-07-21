@@ -1,0 +1,2 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+6223,旺矽,5875.0,1.53,7.7,-8.81,85.92,45.1,3,65.1,-418791.0,71300.0,-238109.0,151692.0,True,False,8.8,0,4.84,3.4
