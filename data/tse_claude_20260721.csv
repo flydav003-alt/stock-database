@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2615,萬海,85.2,5.84,2.09,61.3,5.97,5,32.4,5.1,63.07,True,True
+2609,陽明,50.9,3.88,1.51,50.1,-0.27,1,20.2,1.2,46.39,True,True
+3005,神基,116.5,6.39,1.77,63.4,10.05,1,28.6,18.3,39.16,True,True
+2327,國巨,670.0,6.35,1.73,35.4,-27.94,1,38.9,28.8,0.0,False,True
