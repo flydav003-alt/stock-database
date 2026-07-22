@@ -1,0 +1,4 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+3088,艾訊,147.5,3.29,6.5,5.16,10.13,57.0,3,48.4,2740968.0,0.0,3114124.0,0.0,True,False,25.08,0,13.79,7.3
+4939,亞電,70.9,1.81,-2.61,13.11,55.06,61.4,1,44.2,714113.0,0.0,207166.0,0.0,True,False,16.55,0,9.1,86.3
+5328,華容,66.3,0.44,9.95,4.54,4.34,54.8,1,63.5,1055000.0,0.0,4206581.0,0.0,True,False,4.11,0,2.26,95.3

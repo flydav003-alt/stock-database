@@ -1,0 +1,4 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3088,艾訊,147.5,6.5,3.29,57.0,5.16,3,48.4,7.3,13.79,False,True
+4939,亞電,70.9,-2.61,1.81,61.4,13.11,1,44.2,86.3,9.1,False,True
+5328,華容,66.3,9.95,0.44,54.8,4.54,1,63.5,95.3,2.26,False,True
