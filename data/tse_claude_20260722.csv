@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8112,至上,88.1,2.2,2.17,49.5,-3.28,3,231.2,3.0,45.48,True,False
+2395,研華,596.0,5.11,2.11,70.3,17.55,5,73.4,28.6,26.28,False,True
+3189,景碩,796.0,6.7,2.05,54.1,4.95,1,32.3,43.7,21.96,True,True
+2027,大成鋼,43.75,6.32,2.62,64.0,6.56,4,43.7,3.3,18.77,False,True

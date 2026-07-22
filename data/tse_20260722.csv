@@ -1,0 +1,5 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+8112,至上,88.1,2.17,2.2,-3.28,29.48,49.5,3,231.2,15324342.0,-209485.0,21190329.0,-445485.0,False,True,0.0,87.47,45.48,3.0
+2395,研華,596.0,2.11,5.11,17.55,57.29,70.3,5,73.4,-1405730.0,528662.0,-2769237.0,1114746.0,True,False,54.75,0.0,26.28,28.6
+3189,景碩,796.0,2.05,6.7,4.95,204.26,54.1,1,32.3,-742382.0,653096.0,-2593626.0,2799192.0,True,True,21.09,22.76,21.96,43.7
+2027,大成鋼,43.75,2.62,6.32,6.56,22.01,64.0,4,43.7,23949074.0,4112319.0,26759469.0,4258319.0,True,False,39.11,0.0,18.77,3.3
