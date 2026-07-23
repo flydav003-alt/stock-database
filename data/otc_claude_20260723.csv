@@ -1,0 +1,2 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8383,千附,88.0,5.14,0.47,67.0,26.51,2,200.1,48.4,15.05,False,True

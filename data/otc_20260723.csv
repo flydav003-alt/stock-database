@@ -1,0 +1,2 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+8383,千附,88.0,0.47,5.14,26.51,2.19,67.0,2,200.1,522594.0,0.0,919594.0,0.0,True,False,27.37,0,15.05,48.4
