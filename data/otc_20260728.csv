@@ -1,0 +1,2 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+5904,寶雅,679.0,2.41,1.65,2.47,8.2,57.3,0,8.4,-92299.0,0.0,-386248.0,2000.0,False,True,0,50.13,22.56,21.9
