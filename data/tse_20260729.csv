@@ -1,0 +1,4 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+2412,中華電,140.5,1.76,-0.35,0.5,51.57,54.7,10,11.4,12934049.0,-564666.0,36229581.0,-407090.0,True,False,51.81,0,24.87,2.9
+2357,華碩,761.0,1.65,3.54,5.44,52.79,56.9,5,55.6,1574587.0,52328.0,1790164.0,649301.0,True,False,37.39,0,17.95,10.0
+2207,和泰車,519.0,2.3,3.8,7.42,6.63,72.5,4,51.2,469405.0,3000.0,859677.0,7000.0,True,False,37.14,0,17.83,13.8
