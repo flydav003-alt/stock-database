@@ -1,0 +1,3 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6603,富強鑫,26.2,2.34,1.97,59.4,5.9,1,22.7,6.7,42.53,True,True
+5904,寶雅,720.0,6.04,2.04,64.7,8.07,1,8.4,29.3,36.27,True,True
