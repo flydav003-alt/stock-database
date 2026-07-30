@@ -1,0 +1,4 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1476,儒鴻,352.0,3.99,2.35,60.6,6.52,13,14.4,2.8,79.7,True,True
+1477,聚陽,221.0,2.08,1.58,52.3,0.58,9,0.5,2.1,62.86,True,True
+2207,和泰車,551.0,6.17,2.02,81.0,13.47,6,51.2,14.1,22.88,False,True
