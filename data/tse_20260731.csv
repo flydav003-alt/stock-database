@@ -1,0 +1,5 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+2347,聯強,93.7,2.51,8.83,5.11,11.61,60.8,8,135.8,7153411.0,75000.0,7195990.0,178000.0,True,True,58.95,81.59,70.72,8.3
+3005,神基,114.0,1.71,3.64,5.18,9.17,57.2,7,28.6,3539627.0,52000.0,5293272.0,58000.0,True,True,46.56,80.52,64.22,6.5
+6214,精誠,154.0,2.41,7.32,11.81,13.49,68.7,3,76.9,2405913.0,0.0,3184618.0,5802.0,True,True,41.04,75.99,59.21,6.9
+1402,遠東新,27.15,1.56,0.0,-2.46,7.24,44.8,20,12.1,13943097.0,18000.0,19550973.0,53027.0,False,True,0.0,76.18,39.61,8.4

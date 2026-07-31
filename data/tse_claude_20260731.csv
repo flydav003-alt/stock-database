@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2347,聯強,93.7,8.83,2.51,60.8,5.11,8,135.8,8.3,70.72,True,True
+3005,神基,114.0,3.64,1.71,57.2,5.18,7,28.6,6.5,64.22,True,True
+6214,精誠,154.0,7.32,2.41,68.7,11.81,3,76.9,6.9,59.21,True,True
+1402,遠東新,27.15,0.0,1.56,44.8,-2.46,20,12.1,8.4,39.61,True,False
