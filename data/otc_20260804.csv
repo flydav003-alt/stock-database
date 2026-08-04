@@ -1,0 +1,4 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+6223,旺矽,5900.0,1.21,1.64,-3.65,55.7,50.4,2,65.1,-277907.0,246000.0,-379787.0,287000.0,False,True,0.0,79.48,35.77,0.0
+5904,寶雅,720.0,2.04,6.04,8.07,10.73,64.7,1,8.4,122802.0,300.0,-165084.0,2300.0,True,True,18.67,56.24,35.58,29.3
+6187,萬潤,1090.0,1.29,8.46,8.48,32.36,55.0,3,87.1,498433.0,22000.0,1153919.0,28000.0,True,False,26.8,0.0,14.74,2.3
