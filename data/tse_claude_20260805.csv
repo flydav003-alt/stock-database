@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2388,威盛,83.0,3.36,1.73,62.2,14.63,4,34.0,13.2,63.19,True,True
+2301,光寶科,249.0,-1.19,2.04,63.5,16.28,4,37.0,0.2,60.33,True,True
+2408,南亞科,445.0,2.06,1.6,55.5,7.04,5,719.6,12.7,50.53,True,True
+2464,盟立,170.0,4.94,1.75,59.7,10.08,4,43.1,0.0,49.61,True,True
+3189,景碩,828.0,7.95,2.19,58.7,9.73,3,32.3,19.7,46.32,True,True
