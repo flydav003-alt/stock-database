@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3017,奇鋐,2940.0,7.69,1.69,67.5,22.5,10,,13.1,69.5,True,True
+3006,晶豪科,258.0,7.95,2.26,62.8,21.61,4,491.1,16.0,66.74,True,True
+2465,麗臺,85.5,-0.35,2.15,58.8,9.89,5,,2.6,57.31,True,True
+2027,大成鋼,46.1,3.95,1.87,65.4,9.6,4,,5.3,55.32,True,True
+2464,盟立,178.0,4.71,1.95,62.7,14.67,6,,7.9,52.21,True,True
