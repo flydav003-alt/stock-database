@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+5904,寶雅,720.0,6.04,2.04,64.7,8.07,1,,29.3,32.54,True,True
+5351,鈺創,103.0,6.74,2.39,61.9,17.8,5,,19.5,23.23,False,True
+6187,萬潤,1175.0,9.81,1.57,59.3,16.67,3,,4.9,14.29,False,True
+6419,京晨科,149.5,9.93,2.42,59.0,8.47,2,,6.8,8.07,False,True
+4939,亞電,61.4,3.37,1.32,53.0,1.93,0,,2.8,7.24,True,False
