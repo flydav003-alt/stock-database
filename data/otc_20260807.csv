@@ -1,0 +1,5 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+3293,鈊象,799.0,1.62,1.91,6.71,21.87,66.9,11,25.9,1470400.0,-14200.0,2701484.0,2800.0,True,True,43.38,75.93,58.03,2.4
+5351,鈺創,104.0,1.89,0.97,18.19,64.07,62.4,6,,7964618.0,315000.0,29448981.0,772000.0,True,True,39.94,67.0,52.12,24.3
+5904,寶雅,720.0,2.04,6.04,8.07,10.73,64.7,1,,122802.0,300.0,-165084.0,2300.0,True,True,19.66,49.84,33.24,29.3
+6265,方土昶,55.4,1.16,1.28,12.76,3.17,60.8,4,712.4,852360.0,0.0,1782164.0,0.0,False,True,0.0,60.88,27.4,4.7
