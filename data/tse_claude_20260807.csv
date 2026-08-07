@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6269,台郡,66.6,3.26,2.08,60.3,12.62,5,,3.3,59.79,True,True
+2049,上銀,387.0,6.91,1.82,66.5,17.77,3,33.9,17.5,57.68,True,True
+6781,AES-KY,1145.0,5.05,2.24,60.2,8.91,1,28.2,8.0,55.37,True,True
+8016,矽創,310.5,0.65,1.67,56.3,1.99,5,,8.9,50.87,True,True
+4763,材料-KY,49.9,0.5,1.54,56.7,2.68,2,32.1,17.8,49.16,True,True
