@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2376,技嘉,375.5,7.13,2.18,66.4,10.76,9,59.7,10.4,71.83,True,True
+1605,華新,40.0,4.44,1.89,67.4,17.83,3,10.1,16.6,58.62,True,True
+1560,中砂,728.0,5.97,2.51,57.4,6.51,2,26.6,15.9,58.02,True,True
+1513,中興電,165.5,3.12,2.63,55.3,2.09,3,3.8,0.9,54.34,True,True
+2356,英業達,69.0,5.99,2.74,59.8,8.61,2,65.7,5.5,48.55,True,True
