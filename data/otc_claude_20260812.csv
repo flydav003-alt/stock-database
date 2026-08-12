@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+5443,均豪,113.5,5.58,1.82,63.1,13.3,2,165.6,12.9,54.11,True,True
+8299,群聯,2210.0,5.74,1.16,61.2,13.83,2,377.6,0.5,51.65,True,True
+3498,陽程,131.0,5.22,1.12,62.2,14.99,1,712.6,13.4,50.35,True,True
+6664,群翊,366.5,4.12,1.24,53.1,2.17,3,30.2,2.9,44.57,True,True
+3362,先進光,179.0,2.58,1.16,54.6,5.88,6,1.9,9.1,38.25,True,True
