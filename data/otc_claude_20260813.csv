@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6265,方土昶,58.9,3.7,1.27,65.8,18.07,8,712.4,0.0,51.4,True,True
+3265,台星科,181.0,3.43,1.84,60.5,12.15,4,6.6,1.1,51.05,True,True
+6829,千附精密,222.0,5.21,1.34,59.5,9.0,2,23.0,11.6,45.3,True,True
+3362,先進光,181.0,1.12,1.51,55.6,7.2,7,1.9,12.8,41.33,True,True
+6603,富強鑫,28.85,4.15,1.43,67.1,12.35,2,36.6,30.0,39.03,True,True
