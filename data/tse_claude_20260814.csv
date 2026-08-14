@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8996,高力,1280.0,-0.39,1.91,60.7,18.71,7,57.6,2.0,55.4,True,True
+2615,萬海,90.6,3.54,1.76,68.3,8.05,2,50.1,8.5,54.84,True,True
+6669,緯穎,6435.0,6.01,1.54,66.0,17.14,5,39.2,31.3,53.21,True,True
+2359,所羅門,159.5,1.59,1.9,61.7,13.31,3,36.3,16.0,48.1,True,True
+8046,南電,1305.0,7.41,1.9,61.7,15.32,4,50.2,51.7,47.93,True,True
