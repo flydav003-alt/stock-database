@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+5371,中光電,90.1,4.4,2.61,57.3,5.73,1,12.4,30.2,35.73,True,True
+6143,振曜,91.0,3.41,1.62,47.2,-3.75,1,5.2,0.6,34.6,True,False
+8932,智通*,108.0,2.86,1.15,53.8,-0.06,1,10.7,4.9,33.2,True,False
+6488,環球晶,1010.0,-1.46,1.47,51.0,-6.85,4,19.6,6.3,24.18,True,False
+4510,高鋒,46.45,1.64,1.73,67.8,16.81,0,41.3,1.0,20.71,True,False
