@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1815,富喬,96.5,5.46,1.71,62.7,16.77,5,68.1,1.8,56.59,True,True
+8932,智通*,110.0,1.85,1.26,55.7,1.96,2,10.7,9.5,33.49,True,False
+6829,千附精密,238.5,-2.25,1.42,63.4,16.09,4,23.0,13.6,31.5,True,False
+7402,邑錡,118.0,2.16,2.58,58.5,4.28,0,35.3,29.1,25.25,True,False
+4931,新盛力,269.5,2.47,0.2,66.0,22.87,7,159.5,7.6,25.04,False,True
