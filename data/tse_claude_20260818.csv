@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2609,陽明,56.2,2.74,1.86,71.8,10.21,12,34.6,8.9,79.07,True,True
+2359,所羅門,177.5,1.43,1.83,69.1,23.51,4,36.3,34.5,51.34,True,True
+2603,長榮,238.0,2.81,1.56,77.5,15.16,10,43.1,22.7,34.69,False,True
+6409,旭隼,1065.0,8.34,2.02,58.0,6.74,1,25.8,14.5,23.42,True,True
+2615,萬海,105.0,5.42,2.11,83.6,22.7,3,50.1,30.6,21.11,False,True
