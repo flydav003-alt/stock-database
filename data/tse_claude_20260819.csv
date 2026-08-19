@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1216,統一,77.5,1.71,1.51,57.3,1.15,9,,4.0,59.7,True,True
+2637,慧洋-KY,91.8,3.49,2.92,68.5,9.3,2,,18.6,54.67,True,True
+2609,陽明,59.0,4.98,1.7,77.8,15.11,10,,15.0,37.05,False,True
+2466,冠西電,99.0,2.06,1.58,56.9,-1.17,1,,97.6,24.97,True,False
+2605,新興,36.75,4.4,2.96,75.6,15.15,0,,18.5,21.45,True,False
