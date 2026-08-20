@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1815,富喬,107.0,9.18,2.52,70.3,28.69,8,68.1,0.5,30.08,False,True
+3081,聯亞,2780.0,3.73,1.25,63.0,34.51,3,176.5,17.1,20.8,False,True
+6907,雅特力-KY,194.0,0.78,1.15,55.3,0.74,2,,33.3,20.27,True,False
+4971,IET-KY,580.0,9.85,1.46,63.3,32.07,1,39.6,1.6,13.79,False,True
+7751,竑騰,1575.0,9.76,1.26,61.5,22.52,1,51.0,5.7,12.66,False,True
