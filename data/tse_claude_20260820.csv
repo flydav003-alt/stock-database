@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1402,遠東新,29.2,4.29,2.27,68.1,6.72,10,20.6,1.4,75.02,True,True
+1216,統一,78.2,0.9,1.52,60.1,2.08,3,8.8,5.2,49.1,True,True
+2637,慧洋-KY,94.7,3.16,1.73,72.4,12.28,3,56.2,22.8,48.09,True,True
+1101,台泥,24.8,3.12,1.75,58.9,2.98,1,1.5,1.8,46.86,True,True
+2049,上銀,366.5,-0.14,1.71,55.9,8.31,2,33.9,6.7,41.8,True,False
