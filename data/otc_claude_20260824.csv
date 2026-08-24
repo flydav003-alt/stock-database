@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3260,威剛,438.5,3.79,2.12,62.7,10.9,4,331.3,7.3,56.47,True,True
+3693,營邦,533.0,3.5,1.44,55.8,7.85,1,148.9,5.8,38.52,True,False
+5483,中美晶,181.5,3.12,1.33,48.2,-4.57,1,27.7,7.4,33.71,True,False
+4939,亞電,65.2,-1.95,1.37,57.2,6.72,0,36.8,4.2,12.33,True,False
+3152,璟德,252.0,-1.75,2.14,59.9,10.16,0,26.2,17.5,12.06,True,False
