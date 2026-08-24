@@ -1,0 +1,5 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+8271,宇瞻,235.5,1.59,1.29,7.51,19.83,58.4,1,165.0,2500331.0,0.0,2528834.0,-80000.0,True,True,18.05,85.67,53.21,15.7
+2451,創見,316.0,1.88,1.12,14.65,53.88,64.0,1,307.7,-402842.0,75000.0,8867474.0,-112000.0,True,True,27.69,56.0,42.41,7.5
+4967,十銓,278.0,1.86,0.72,12.54,35.47,60.5,0,98.7,-76998.0,0.0,1297922.0,0.0,False,True,0.0,56.17,29.21,0.0
+3605,宏致,115.5,1.52,6.45,14.6,16.61,58.6,1,29.8,-2948029.0,1128000.0,-3844366.0,1128000.0,False,True,0.0,27.12,14.1,50.8

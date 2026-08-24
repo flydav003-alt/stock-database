@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8271,宇瞻,235.5,1.29,1.59,58.4,7.51,1,165.0,15.7,53.21,True,True
+2451,創見,316.0,1.12,1.88,64.0,14.65,1,307.7,7.5,42.41,True,True
+4967,十銓,278.0,0.72,1.86,60.5,12.54,0,98.7,0.0,29.21,True,False
+3605,宏致,115.5,6.45,1.52,58.6,14.6,1,29.8,50.8,14.1,True,False
