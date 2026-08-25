@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3324,雙鴻,1065.0,4.93,1.89,60.6,10.69,2,116.7,5.4,52.1,True,True
+3693,營邦,553.0,3.75,1.52,59.4,11.31,2,148.9,9.7,50.66,True,True
+3498,陽程,200.0,8.11,0.57,76.2,53.2,8,712.6,68.8,36.92,False,True
+7751,竑騰,1810.0,8.71,2.0,67.8,34.73,2,51.0,29.3,22.84,False,True
+6727,亞泰金屬,470.5,5.73,1.23,60.4,21.59,2,37.9,10.1,18.53,False,True
