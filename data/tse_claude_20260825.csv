@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2301,光寶科,296.0,3.14,1.8,68.9,23.24,6,37.6,37.7,57.54,True,True
+2606,裕民,78.0,7.88,2.81,79.5,18.61,8,26.3,26.4,32.36,False,True
+3532,台勝科,378.0,0.4,1.71,55.8,8.17,4,28.8,1.6,15.51,False,True
+3231,緯創,178.5,1.71,1.71,50.6,0.45,5,60.8,11.6,13.97,False,True
