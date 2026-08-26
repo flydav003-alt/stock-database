@@ -1,0 +1,4 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6669,緯穎,6785.0,5.36,1.66,68.0,14.78,4,39.2,58.5,63.57,True,True
+3017,奇鋐,3155.0,6.95,1.62,62.8,17.36,6,57.4,39.9,28.97,False,True
+3714,富采,62.7,5.2,2.38,60.9,14.19,0,24.9,1.8,28.05,True,False
