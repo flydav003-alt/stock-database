@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3491,昇達科,1425.0,5.95,1.66,58.0,15.68,12,82.0,8.8,69.04,True,True
+6104,創惟,102.5,2.5,1.46,66.1,9.79,7,4.5,1.0,52.77,True,True
+4931,新盛力,265.5,3.91,1.37,58.3,16.0,1,159.5,14.2,48.68,True,True
+6530,創威,89.0,3.97,1.91,59.5,14.56,1,19.5,4.5,47.67,True,True
+6761,穩得,185.0,-1.07,1.53,59.2,12.71,3,16.2,2.8,46.54,True,True
