@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3693,營邦,587.0,5.58,1.65,65.1,15.37,5,148.9,17.2,57.25,True,True
+3265,台星科,186.5,5.67,1.81,61.6,14.09,3,6.6,3.9,51.49,True,True
+3491,昇達科,1510.0,5.96,1.51,61.5,21.43,13,82.0,13.1,37.53,False,True
+6761,穩得,188.5,1.89,1.15,61.5,14.03,4,16.2,1.6,33.5,True,False
+1815,富喬,125.5,7.73,1.55,75.6,40.01,9,68.1,13.1,32.35,False,True
