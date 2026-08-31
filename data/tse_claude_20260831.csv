@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1717,長興,82.5,6.18,2.09,70.1,20.88,7,23.9,14.7,72.02,True,True
+2357,華碩,999.0,3.52,1.83,71.0,15.49,3,53.3,52.1,59.03,True,True
+3576,聯合再生,18.2,4.0,2.31,58.7,5.64,2,72.7,8.3,55.71,True,True
+2408,南亞科,543.0,0.56,1.97,62.1,15.99,5,719.6,29.0,54.09,True,True
+4938,和碩,91.1,2.94,2.41,56.9,2.95,2,11.6,10.3,52.06,True,True
