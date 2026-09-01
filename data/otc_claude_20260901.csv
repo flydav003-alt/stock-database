@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3491,昇達科,1480.0,7.25,0.84,58.3,18.14,15,82.0,17.0,38.67,False,True
+6907,雅特力-KY,184.5,0.27,1.27,50.4,1.39,2,,19.0,30.82,True,False
+3105,穩懋,492.0,9.94,1.25,68.1,32.18,11,31.2,19.7,30.47,False,True
+6532,瑞耘,98.6,3.46,2.06,72.1,21.85,5,49.1,7.4,23.41,False,True
+6187,萬潤,1375.0,2.23,0.8,60.2,18.05,6,73.4,36.8,21.03,False,True
