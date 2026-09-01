@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2357,華碩,1010.0,1.1,1.59,72.1,15.61,5,53.3,51.4,61.76,True,True
+3706,神達,95.7,3.46,2.53,64.4,5.3,4,49.7,2.6,60.97,True,True
+2395,研華,711.0,5.02,1.78,66.7,11.05,4,87.6,39.4,53.11,True,True
+5876,上海商銀,44.5,3.73,1.69,57.7,1.61,2,19.6,6.3,50.39,True,True
+6505,台塑化,76.7,4.35,1.67,59.2,6.54,4,32.3,33.2,46.89,True,True
