@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2486,一詮,288.0,4.35,1.67,70.1,23.09,5,,15.7,61.6,True,True
+4576,大銀微系統,242.0,4.99,2.18,66.3,16.02,3,,8.8,55.97,True,True
+3231,緯創,185.5,1.92,1.84,56.8,1.6,6,,16.7,54.43,True,True
+4763,材料-KY,51.5,3.0,1.87,59.4,5.07,3,,0.4,49.72,True,True
+6505,台塑化,78.7,2.61,1.8,61.9,9.7,3,,33.6,40.47,True,True
