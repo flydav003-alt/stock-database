@@ -1,0 +1,3 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+5274,信驊,17850.0,1.11,0.71,11.84,108.1,63.4,3,97.6,-37417.0,101200.0,-214235.0,396311.0,False,True,0.0,82.55,37.15,9.7
+6510,精測,3350.0,1.6,-2.47,21.08,66.29,65.4,4,54.3,-613798.0,524000.0,-1317023.0,759000.0,True,False,33.65,0.0,18.51,9.3
