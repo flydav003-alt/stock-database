@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2377,微星,161.5,7.31,1.57,61.8,7.76,9,,17.9,62.56,True,True
+2353,宏碁,32.7,4.64,1.95,60.2,6.35,6,,2.2,58.89,True,True
+3714,富采,66.8,8.62,1.69,65.7,16.17,4,,9.0,53.98,True,True
+2324,仁寶,41.6,7.35,1.78,59.2,7.27,1,,17.8,44.22,True,True
+2388,威盛,81.4,8.53,2.38,61.4,8.38,1,,17.1,36.58,True,True
