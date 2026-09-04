@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3362,先進光,210.0,6.06,0.91,61.8,13.19,9,1.9,30.0,25.43,False,True
+4510,高鋒,47.55,1.06,1.66,64.5,11.8,0,41.3,12.3,22.96,True,False
+4979,華星光,629.0,9.97,3.23,61.7,18.42,6,31.0,47.0,21.19,False,True
+3163,波若威,775.0,7.64,1.09,54.9,10.22,5,28.7,4.4,18.11,False,True
+3491,昇達科,1505.0,7.12,1.05,58.5,17.07,2,82.0,25.9,16.59,False,True
