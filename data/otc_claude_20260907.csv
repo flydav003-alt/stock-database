@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6739,竹陞科技,1110.0,-2.2,2.33,54.2,8.44,6,96.7,0.0,40.09,True,False
+7734,印能科技,2915.0,0.87,1.97,47.4,-5.79,2,,4.3,32.24,True,False
+6173,信昌電,286.5,9.98,0.83,67.5,39.37,5,,4.9,19.75,False,True
+5443,均豪,120.0,6.67,1.72,67.5,15.71,4,,12.7,19.64,False,True
+6667,信紘科,255.0,6.47,2.26,70.3,13.3,0,,0.0,19.22,True,False
