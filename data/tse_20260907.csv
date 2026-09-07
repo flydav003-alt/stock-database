@@ -1,0 +1,2 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+6770,力積電,72.9,1.83,6.42,7.53,175.17,56.2,2,,112644189.0,7427000.0,77444039.0,7425000.0,True,True,28.77,71.22,50.84,2.4
