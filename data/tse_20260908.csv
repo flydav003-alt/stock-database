@@ -1,0 +1,4 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+2360,致茂,2265.0,2.16,1.57,8.74,112.52,61.0,4,156.3,441059.0,564933.0,718587.0,565174.0,True,True,36.01,87.71,62.89,24.5
+2344,華邦電,188.0,1.62,4.44,8.19,419.28,58.1,4,289.4,92597119.0,3923737.0,145338470.0,-4350264.0,True,True,36.9,84.84,61.83,6.5
+5871,中租-KY,115.0,1.55,2.22,2.11,11.09,53.0,6,,4277491.0,29942.0,3120846.0,400652.0,True,True,36.55,69.07,53.46,0.4
