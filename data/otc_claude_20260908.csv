@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3260,威剛,414.0,0.49,1.71,53.2,1.47,2,279.8,1.0,44.62,True,True
+6907,雅特力-KY,204.0,2.26,2.43,59.7,10.7,3,,4.6,37.36,True,True
+4979,華星光,605.0,2.54,1.21,57.1,10.46,1,,39.9,30.62,True,False
+6510,精測,3620.0,4.32,0.9,71.0,25.46,7,54.3,26.8,22.85,False,True
+6187,萬潤,1385.0,1.09,1.4,59.7,11.95,4,,31.9,21.03,True,False
