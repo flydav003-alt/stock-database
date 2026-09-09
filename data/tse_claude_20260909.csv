@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6805,富世達,2295.0,6.5,2.04,63.2,18.42,12,29.1,62.8,72.8,True,True
+2360,致茂,2335.0,3.09,1.61,64.0,11.65,3,156.3,26.2,60.46,True,True
+2049,上銀,370.5,5.86,1.83,56.4,2.74,3,42.3,11.6,55.31,True,True
+3044,健鼎,509.0,5.17,1.84,62.8,9.69,1,65.5,15.9,54.88,True,True

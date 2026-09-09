@@ -1,0 +1,5 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+6805,富世達,2295.0,2.04,6.5,18.42,35.7,63.2,12,29.1,12970.0,312000.0,180570.0,323100.0,True,True,91.81,55.25,72.8,62.8
+2360,致茂,2335.0,1.61,3.09,11.65,116.46,64.0,3,156.3,-9051.0,715116.0,1002707.0,1311290.0,True,True,34.28,84.62,60.46,26.2
+2049,上銀,370.5,1.83,5.86,2.74,31.94,56.4,3,42.3,4129104.0,101000.0,3429702.0,250000.0,True,True,27.0,81.45,55.31,11.6
+3044,健鼎,509.0,1.84,5.17,9.69,22.58,62.8,1,65.5,1052807.0,-15087.0,684515.0,44278.0,True,True,25.17,82.31,54.88,15.9
