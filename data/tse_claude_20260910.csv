@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6531,愛普*,1030.0,3.1,1.61,62.6,13.93,4,150.8,20.0,64.27,True,True
+6505,台塑化,86.2,-1.49,1.58,67.9,17.23,5,50.3,30.2,49.86,True,True
+2609,陽明,58.0,-0.85,1.6,54.4,2.96,3,56.2,20.8,42.16,True,False
+2605,新興,36.25,-1.89,1.9,59.3,4.63,0,,20.2,21.81,True,False
+1312,國喬,14.95,2.05,1.68,63.4,14.76,3,89.2,14.1,18.18,False,True
