@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3491,昇達科,1415.0,4.43,1.29,52.5,4.07,2,93.2,0.0,37.59,True,False
+5340,建榮,85.9,0.23,1.25,61.0,8.44,0,47.8,7.9,21.71,True,False
+3498,陽程,192.0,0.52,1.48,61.1,10.73,0,326.0,56.1,14.68,True,False
+4939,亞電,82.4,0.0,2.1,55.2,11.5,0,45.4,35.5,13.9,True,False
+6173,信昌電,290.0,-1.69,2.41,64.7,29.29,1,54.3,25.3,13.41,False,True
