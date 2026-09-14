@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6245,立端,85.5,5.17,2.67,58.8,3.5,5,38.4,6.1,53.74,True,True
+6274,台燿,1410.0,3.3,1.22,49.0,-4.33,4,132.5,8.9,37.78,True,False
+6227,茂綸,127.0,-0.39,2.45,60.9,6.29,0,168.9,12.4,26.94,True,False
+8227,巨有科技,241.0,0.84,2.34,80.3,44.87,5,42.2,47.9,21.09,False,True
+8358,金居,518.0,6.8,2.86,58.1,13.47,2,59.7,18.0,16.51,False,True
