@@ -1,0 +1,4 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3443,創意,6400.0,4.58,1.54,67.0,13.62,5,111.0,52.9,55.66,True,True
+1504,東元,70.3,1.15,1.62,49.0,-0.61,8,16.8,0.6,42.04,True,False
+2412,中華電,142.5,1.42,1.53,74.8,3.91,14,25.6,4.8,37.56,False,True
