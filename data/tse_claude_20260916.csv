@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6213,聯茂,550.0,5.97,1.58,63.7,7.47,5,97.9,70.5,53.09,True,True
+3019,亞光,137.5,4.17,1.83,48.9,-0.91,1,15.3,6.6,47.79,True,True
+2353,宏碁,32.0,3.56,1.64,54.3,1.91,14,38.4,9.4,36.84,False,True
+2455,全新,515.0,-0.96,3.72,60.9,12.6,0,71.2,85.9,20.11,True,False
