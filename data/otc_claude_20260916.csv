@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3105,穩懋,472.5,4.07,1.35,60.5,12.47,8,30.6,50.7,59.14,True,True
+5425,台半,94.8,6.04,1.96,55.7,4.78,1,22.4,10.2,44.01,True,True
+6274,台燿,1415.0,3.28,1.16,49.8,-3.55,1,132.5,25.8,37.41,True,False
+3580,友威科,90.8,3.18,2.55,60.9,9.88,0,26.9,11.8,22.57,True,False
+6147,頎邦,207.5,3.75,1.28,62.3,17.48,3,43.6,26.5,18.36,False,True
