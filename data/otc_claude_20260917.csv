@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3105,穩懋,471.0,-0.32,1.69,60.0,11.3,9,30.6,38.7,59.15,True,True
+6530,創威,99.7,3.21,2.71,60.6,11.29,4,10.7,42.8,53.73,True,True
+6643,M31,438.0,4.29,1.95,54.6,3.37,2,73.1,4.4,45.85,True,True
+3680,家登,527.0,3.13,1.32,55.9,6.46,2,49.9,9.6,44.8,True,True
+3455,由田,246.0,2.29,2.01,57.1,2.88,3,22.4,27.5,44.45,True,True
