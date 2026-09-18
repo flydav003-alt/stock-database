@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2303,聯電,156.0,5.76,1.68,67.6,19.65,14,30.7,12.2,85.91,True,True
+1802,台玻,58.8,0.51,1.84,51.3,0.18,15,32.6,5.8,79.69,True,True
+2376,技嘉,356.0,0.28,1.6,53.2,0.2,8,98.4,2.3,64.34,True,True
+4763,材料-KY,50.5,5.87,1.71,55.1,3.25,6,20.8,0.4,62.45,True,True
+6278,台表科,196.0,6.52,1.66,57.2,4.68,8,10.9,17.4,61.82,True,True
