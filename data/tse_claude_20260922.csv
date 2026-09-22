@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3014,聯陽,139.0,-0.36,1.52,66.0,5.47,24,5.3,7.8,99.08,True,True
+6526,達發,764.0,5.52,2.16,76.6,21.66,11,26.1,30.2,81.39,True,True
+2449,京元電子,317.0,5.14,1.7,70.8,21.52,7,31.6,17.0,70.45,True,True
+3035,智原,203.0,6.28,2.26,67.8,14.24,5,29.9,2.8,68.55,True,True
+8150,南茂,105.5,2.43,2.52,68.4,16.7,5,33.3,16.2,66.32,True,True
