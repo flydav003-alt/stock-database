@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3265,台星科,189.5,4.7,2.34,63.3,9.49,4,3.4,17.7,52.11,True,True
+8040,九暘,85.1,1.92,2.18,62.4,12.39,1,54.1,16.6,48.75,True,True
+6182,合晶,119.0,3.48,1.61,57.9,7.61,1,20.0,4.4,42.9,True,True
+5439,高技,253.5,3.47,1.27,51.2,0.72,1,5.2,7.6,38.17,True,True
+8299,群聯,2185.0,1.63,1.19,59.8,5.8,5,376.5,19.7,37.58,True,False
