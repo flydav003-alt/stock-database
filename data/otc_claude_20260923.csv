@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+7712,博盛半導體,166.0,5.4,2.15,63.2,9.21,6,55.5,17.3,56.89,True,True
+3491,昇達科,1565.0,5.74,1.17,58.9,11.08,1,93.2,35.5,48.7,True,True
+4768,晶呈科技,329.0,5.62,1.9,57.8,6.38,1,93.1,5.3,48.08,True,True
+3693,營邦,732.0,4.57,1.16,71.4,16.92,3,171.0,48.0,42.6,True,True
+3529,力旺,3305.0,6.27,1.99,68.9,28.81,8,42.8,36.0,28.36,False,True
