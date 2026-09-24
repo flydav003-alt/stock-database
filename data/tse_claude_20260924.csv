@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3189,景碩,962.0,6.18,1.53,66.1,14.32,4,40.6,50.5,63.85,True,True
+2484,希華,72.8,-0.14,1.6,53.4,1.07,1,25.1,10.6,45.82,True,True
+3042,晶技,203.0,2.53,2.17,63.9,10.77,1,23.5,35.8,39.16,True,True
+9945,潤泰新,29.9,1.18,1.5,66.5,4.36,0,38.0,15.0,25.42,True,False
+1727,中華化,115.5,-0.86,2.39,72.3,20.39,3,62.7,62.4,20.92,False,True
