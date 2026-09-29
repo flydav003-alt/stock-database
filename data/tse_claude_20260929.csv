@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6505,台塑化,94.3,8.14,2.11,71.7,17.99,8,50.3,26.1,60.4,True,True
+2484,希華,76.9,5.63,2.24,60.6,6.5,2,25.1,29.7,56.68,True,True
+4566,時碩工業,73.2,-1.48,1.86,65.4,11.27,3,53.9,5.0,56.63,True,True
+6209,今國光,81.5,2.0,1.68,57.3,5.58,2,106.8,29.4,54.83,True,True
+1301,台塑,64.6,0.78,1.72,54.7,1.94,2,6.8,14.9,47.65,True,True
