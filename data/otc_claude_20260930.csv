@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3402,漢科,136.0,3.82,2.51,67.5,9.38,11,32.8,22.5,65.97,True,True
+6664,群翊,376.0,1.62,1.97,64.3,7.19,7,32.3,21.5,55.37,True,True
+6903,巨漢,315.5,3.61,2.09,54.1,2.7,5,122.7,14.5,52.84,True,True
+5864,致和證,39.2,6.23,1.52,67.7,9.69,1,112.9,41.3,49.2,True,True
+4931,新盛力,252.0,2.44,1.86,55.7,1.61,3,125.9,56.0,47.6,True,True
