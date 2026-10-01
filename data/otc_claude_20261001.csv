@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6613,朋億*,278.5,1.64,1.88,58.1,5.41,6,186.8,2.8,54.45,True,True
+5536,聖暉*,959.0,4.35,1.65,62.3,10.66,3,44.5,3.7,50.68,True,True
+3221,台嘉碩,53.7,4.88,2.44,64.1,9.89,1,28.7,21.5,47.6,True,True
+3357,臺慶科,212.5,3.91,2.38,53.1,2.05,2,53.1,9.5,46.37,True,True
+6435,大中,262.0,3.97,1.65,58.4,5.46,1,25.8,15.4,43.21,True,True
