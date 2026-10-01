@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3026,禾伸堂,852.0,7.71,1.87,63.0,15.6,19,33.2,89.3,94.64,True,True
+3030,德律,289.0,3.58,1.61,59.7,4.28,7,31.9,7.6,63.71,True,True
+6706,惠特,154.5,3.0,1.55,61.6,14.66,3,120.5,59.3,61.96,True,True
+3231,緯創,190.5,3.25,1.77,58.0,3.46,4,166.5,8.2,59.36,True,True
+1597,直得,154.5,5.46,1.94,61.0,8.83,1,45.2,35.5,54.97,True,True
