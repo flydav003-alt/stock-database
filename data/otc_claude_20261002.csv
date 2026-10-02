@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+5425,台半,102.0,4.62,1.9,66.1,9.68,4,22.4,26.9,50.88,True,True
+5351,鈺創,116.0,5.94,2.08,56.2,3.13,1,525.3,45.2,47.59,True,True
+6739,竹陞科技,1175.0,6.33,1.61,55.7,5.28,1,96.7,30.6,47.36,True,True
+8086,宏捷科,120.0,4.35,2.21,61.5,6.65,2,8.4,3.9,46.39,True,True
+3357,臺慶科,215.5,1.41,1.67,55.6,3.4,3,53.1,5.6,45.13,True,True
