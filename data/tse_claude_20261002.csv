@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3030,德律,300.0,3.81,2.33,65.7,8.04,8,54.0,4.7,71.22,True,True
+6239,力成,308.0,5.3,2.38,65.2,9.47,5,24.5,29.1,66.09,True,True
+6770,力積電,76.5,2.68,1.58,60.3,6.94,5,76.2,39.9,60.34,True,True
+5434,崇越,583.0,2.82,1.54,70.1,8.54,4,36.3,15.2,58.65,True,True
+2327,國巨,626.0,3.99,1.89,60.4,12.01,2,51.8,13.4,57.8,True,True
