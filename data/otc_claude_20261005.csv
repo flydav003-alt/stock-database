@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6613,朋億*,284.5,1.25,1.22,62.0,6.78,8,186.8,0.4,56.25,True,True
+5425,台半,105.5,3.43,2.07,70.1,12.61,5,22.4,29.3,53.99,True,True
+3680,家登,561.0,1.63,1.64,61.4,7.04,6,49.9,30.5,52.48,True,True
+4991,環宇-KY,524.0,-1.87,1.68,58.3,7.93,6,45.6,22.9,51.09,True,True
+6227,茂綸,142.5,1.42,2.03,67.8,13.61,1,168.9,18.8,50.71,True,True
