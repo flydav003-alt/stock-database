@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+5347,世界,191.0,3.8,1.55,71.3,16.41,7,,21.7,52.58,True,True
+3680,家登,563.0,0.36,1.73,61.9,6.68,7,,25.8,48.56,True,True
+3689,湧德,116.5,3.1,1.89,63.6,4.25,6,,8.4,47.29,True,True
+6290,良維,290.0,3.02,1.55,64.7,8.66,2,,35.8,42.18,True,True
+3088,艾訊,135.5,0.74,1.69,60.6,6.78,2,,2.3,39.92,True,True
