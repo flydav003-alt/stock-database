@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3661,世芯-KY,4180.0,5.82,1.91,63.1,8.81,6,273.6,15.8,68.69,True,True
+2313,華通,252.0,1.41,2.75,65.9,8.66,6,15.0,15.6,65.11,True,True
+2383,台光電,5995.0,5.18,2.17,67.4,13.59,2,168.9,14.3,62.97,True,True
+4927,泰鼎-KY,52.3,-1.13,2.4,74.1,21.04,9,35.5,63.9,62.97,True,True
+6197,佳必琪,365.0,5.8,2.29,75.5,16.23,2,26.1,16.8,60.01,True,True
