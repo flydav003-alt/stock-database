@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1504,東元,73.3,3.09,3.11,64.0,3.9,6,13.7,9.9,64.41,True,True
+2360,致茂,2400.0,2.13,1.61,60.4,10.23,7,206.5,21.5,57.26,True,True
+3715,定穎投控,139.0,4.51,1.8,65.0,11.31,1,84.7,19.3,57.21,True,True
+1513,中興電,168.0,0.6,1.5,55.7,1.26,8,,4.7,56.6,True,True
+2489,瑞軒,41.4,5.08,1.57,54.5,1.46,4,32.5,30.6,55.82,True,True
