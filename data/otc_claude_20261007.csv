@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3689,湧德,118.0,1.29,1.87,66.2,5.26,7,62.1,6.8,53.44,True,True
+6548,長科*,77.9,1.7,1.65,60.8,6.52,4,42.9,5.0,48.57,True,True
+5340,建榮,90.0,5.88,2.31,65.9,8.44,1,,26.1,44.2,True,True
+6530,創威,98.2,2.94,1.72,53.5,1.57,2,8.1,27.0,34.83,True,False
+3363,上詮,679.0,4.46,1.58,53.1,-1.65,1,28.4,12.4,34.38,True,False
