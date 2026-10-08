@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2428,興勤,282.0,5.62,2.02,70.7,9.82,3,41.6,25.6,60.07,True,True
+2408,南亞科,532.0,3.5,1.52,56.7,4.04,2,576.6,16.4,53.7,True,True
+6415,矽力*-KY,462.5,1.31,1.65,61.8,9.12,4,,4.8,53.06,True,True
+2439,美律,80.6,2.41,1.68,60.2,3.95,3,4.1,0.5,51.44,True,True
+1301,台塑,81.3,7.82,2.78,80.2,22.43,7,,45.7,32.5,False,True
