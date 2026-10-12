@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1312,國喬,16.05,5.94,3.03,68.3,8.54,4,96.8,34.9,68.03,True,True
+2441,超豐,130.0,2.36,2.29,62.6,7.76,7,39.6,0.8,67.88,True,True
+2609,陽明,63.6,6.53,3.32,66.3,7.2,5,69.9,23.3,53.46,True,True
+9904,寶成,25.65,2.4,1.61,64.6,3.9,4,,6.4,50.12,True,True
+2467,志聖,590.0,6.88,1.72,59.7,4.91,1,90.6,7.3,49.81,True,True
