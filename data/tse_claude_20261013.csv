@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+4976,佳凌,41.7,1.71,3.07,70.0,12.48,7,15.0,17.3,70.5,True,True
+2347,聯強,100.5,1.62,1.54,75.6,9.26,8,158.8,10.4,69.64,True,True
+3034,聯詠,546.0,3.21,1.82,53.3,0.7,9,25.0,1.5,67.02,True,True
+2377,微星,157.0,1.29,1.81,58.0,2.29,10,1.8,1.9,66.75,True,True
+5876,上海商銀,51.9,2.98,1.64,73.9,6.69,8,10.7,20.4,65.74,True,True
