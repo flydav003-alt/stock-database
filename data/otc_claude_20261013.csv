@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3264,欣銓,268.5,-1.47,1.13,62.3,10.03,4,46.9,22.3,47.61,True,True
+3455,由田,291.0,-0.17,1.45,68.0,13.65,4,23.4,44.1,39.01,True,True
+5864,致和證,39.0,-2.26,1.18,59.0,5.19,2,59.0,28.1,35.16,True,False
+6667,信紘科,277.0,1.09,1.42,65.2,9.41,1,91.1,22.8,24.55,True,False
+6231,系微,247.5,-0.2,1.9,63.3,9.71,0,31.6,13.8,23.43,True,False
