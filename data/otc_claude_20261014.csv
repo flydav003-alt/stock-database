@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3293,鈊象,811.0,1.76,1.52,68.7,8.86,14,25.3,3.8,63.82,True,True
+6274,台燿,1735.0,4.83,1.1,63.6,15.85,8,114.8,8.4,50.16,True,True
+3264,欣銓,278.0,3.54,1.36,65.7,13.25,5,46.9,28.4,25.98,True,False
+6640,均華,1070.0,-0.93,1.51,47.7,-5.31,0,87.2,7.0,24.53,True,False
+6217,中探針,216.5,9.9,2.11,71.6,22.45,5,0.7,40.6,21.7,False,True
