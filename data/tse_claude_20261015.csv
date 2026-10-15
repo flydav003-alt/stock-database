@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2412,中華電,152.5,2.69,1.94,83.8,5.97,16,,12.1,39.91,False,True
+1216,統一,79.5,1.66,2.11,70.7,5.7,13,,4.2,36.42,False,True
+2105,正新,31.8,1.27,2.06,69.7,4.46,6,,3.6,19.0,False,True
+2355,敬鵬,53.6,3.28,1.9,83.0,23.31,2,,24.4,17.71,False,True

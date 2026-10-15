@@ -1,0 +1,5 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+2412,中華電,152.5,1.94,2.69,5.97,37.32,83.8,16,,14589491.0,7528.0,21413230.0,2070958.0,True,False,83.15,0,39.91,12.1
+1216,統一,79.5,2.11,1.66,5.7,30.78,70.7,13,,26401872.0,2525000.0,41949341.0,6314103.0,True,False,75.88,0,36.42,4.2
+2105,正新,31.8,2.06,1.27,4.46,4.26,69.7,6,,7447954.0,-128000.0,14779267.0,-537000.0,True,False,39.58,0,19.0,3.6
+2355,敬鵬,53.6,1.9,3.28,23.31,21.33,83.0,2,,3347330.0,0.0,2408330.0,0.0,True,False,36.89,0,17.71,24.4
