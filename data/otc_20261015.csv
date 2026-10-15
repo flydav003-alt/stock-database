@@ -1,0 +1,4 @@
+﻿stock_id,name,close,vol_ratio,daily_return_pct,ma28_bias_pct,turnover_億,rsi14,inst_consec_days,yoy_revenue_pct,foreign_today,trust_today,foreign_3d,trust_3d,is_strong_confirm,is_early_breakout,total_score,early_score,composite_score,past_42d_pct
+3293,鈊象,811.0,1.46,0.0,8.32,24.93,68.7,15,25.3,1443232.0,10000.0,3156494.0,14000.0,False,True,0.0,74.9,33.71,6.4
+6146,耕興,207.5,1.18,1.72,12.93,2.54,78.2,7,10.9,434340.0,6178.0,909258.0,12390.0,True,False,28.9,0.0,15.9,7.8
+3663,鑫科,68.5,3.03,2.85,10.27,2.45,63.6,2,56.5,856.0,0.0,181858.0,0.0,True,False,23.68,0.0,13.02,6.5

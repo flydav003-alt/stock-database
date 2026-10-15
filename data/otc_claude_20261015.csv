@@ -1,0 +1,4 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3293,鈊象,811.0,0.0,1.46,68.7,8.32,15,25.3,6.4,33.71,True,False
+6146,耕興,207.5,1.72,1.18,78.2,12.93,7,10.9,7.8,15.9,False,True
+3663,鑫科,68.5,2.85,3.03,63.6,10.27,2,56.5,6.5,13.02,False,True
