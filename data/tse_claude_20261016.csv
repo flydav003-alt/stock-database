@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+4961,天鈺,190.0,1.88,2.07,63.1,5.78,10,57.0,16.2,72.43,True,True
+2610,華航,21.05,2.43,2.01,61.7,3.47,8,31.9,5.8,66.47,True,True
+2377,微星,161.5,2.22,1.76,64.0,4.76,11,1.8,1.6,30.99,False,True
+2105,正新,32.5,2.2,1.58,75.5,6.53,7,12.5,6.9,22.39,False,True
+6415,矽力*-KY,489.0,4.82,1.77,64.0,13.75,2,50.8,1.9,16.71,False,True
