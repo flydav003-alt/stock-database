@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6510,精測,3175.0,1.76,1.17,49.8,-3.68,2,55.9,10.2,35.42,True,False
+5314,世紀*,27.5,0.92,2.14,43.9,-10.67,0,45.7,54.5,24.23,True,False
+5340,建榮,97.5,4.84,2.1,66.2,13.37,2,46.7,22.6,14.56,False,True
+4577,達航科技,101.5,9.73,3.08,67.7,14.73,2,55.2,29.3,13.16,False,True
+8074,鉅橡,61.1,9.89,2.53,64.0,14.97,2,19.3,9.1,12.77,False,True
