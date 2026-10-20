@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+4566,時碩工業,85.8,6.98,1.93,72.6,19.8,7,44.6,16.7,33.2,False,True
+3673,TPK-KY,72.4,1.54,2.48,54.2,4.56,0,27.8,20.3,28.55,True,False
+5469,瀚宇博,85.5,-0.7,1.65,72.2,11.51,5,36.2,15.5,19.35,False,True
+6141,柏承,59.7,2.23,2.37,65.2,14.88,3,74.2,44.7,19.08,False,True
+3231,緯創,189.0,5.0,1.75,54.2,2.01,2,87.2,4.4,9.6,False,True
