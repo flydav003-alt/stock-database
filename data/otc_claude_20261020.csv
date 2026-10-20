@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+8383,千附,70.2,1.59,2.29,57.2,3.93,3,83.6,1.6,49.73,True,True
+1595,川寶,80.8,5.62,2.66,62.9,12.69,2,226.7,30.3,46.98,True,True
+6207,雷科,135.0,2.27,2.63,54.1,5.35,1,35.4,32.4,46.69,True,True
+6245,立端,90.1,0.22,1.28,60.4,4.24,3,4.6,11.0,33.49,True,False
+6894,衛司特,404.5,9.18,1.39,63.9,10.63,2,85.8,22.6,14.55,False,True
