@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6526,達發,806.0,0.62,1.51,60.9,6.53,15,26.6,39.0,70.12,True,True
+6426,統新,342.0,3.32,1.56,55.3,0.01,6,53.0,48.1,47.32,True,True
+1809,中釉,47.3,0.0,1.93,60.8,11.51,3,5.9,25.8,44.24,True,True
+4566,時碩工業,85.1,-0.82,1.69,70.7,17.51,9,44.6,21.6,32.33,False,True
+1709,和益,56.0,-0.88,1.52,56.5,12.52,3,6.6,72.0,27.44,True,False
