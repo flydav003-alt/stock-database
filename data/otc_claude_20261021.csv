@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6231,系微,243.0,4.29,1.51,56.2,5.62,2,31.6,13.8,45.73,True,True
+6788,華景電,365.5,5.33,1.12,54.2,4.55,2,41.5,4.4,44.05,True,True
+8383,千附,71.8,2.28,1.36,61.8,5.91,4,83.6,6.8,37.76,True,False
+6245,立端,90.1,0.0,1.36,60.4,3.78,4,4.6,8.0,33.77,True,False
+1595,川寶,80.0,-0.99,2.29,61.3,10.76,0,226.7,29.0,17.04,True,False
