@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1101,台泥,27.95,4.29,2.04,67.2,9.22,6,7.6,12.7,63.97,True,True
+3715,定穎投控,134.5,-0.37,2.11,54.6,4.42,2,84.7,22.8,53.95,True,True
+4526,東台,41.05,7.88,3.13,75.6,24.02,2,81.0,37.3,53.42,True,True
+1809,中釉,47.0,-0.63,1.64,59.8,10.06,4,5.9,23.8,44.16,True,True
+2328,廣宇,53.6,-1.29,2.01,72.5,11.68,5,34.3,17.5,19.66,False,True
