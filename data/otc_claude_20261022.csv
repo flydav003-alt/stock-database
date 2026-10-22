@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+6173,信昌電,293.5,3.16,1.97,55.1,2.04,2,54.8,58.6,34.75,True,True
+4953,緯軟,125.5,2.03,2.32,67.0,5.94,6,17.6,2.0,16.37,False,True
+3498,陽程,238.5,-2.25,1.23,58.9,9.41,0,283.6,30.0,14.09,True,False
+3374,精材,463.5,-1.49,1.56,52.7,0.74,4,21.3,52.7,7.19,False,True
+3691,碩禾,109.0,9.88,2.24,56.6,5.17,2,64.2,7.4,6.29,False,True
