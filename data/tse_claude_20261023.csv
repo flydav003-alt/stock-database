@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+1101,台泥,27.95,4.29,2.04,67.2,9.22,6,7.6,12.7,63.98,True,True
+3715,定穎投控,134.5,-0.37,2.11,54.6,4.42,2,84.7,22.8,53.95,True,True
+3029,零壹,122.5,2.94,1.72,59.6,3.2,3,38.6,9.9,53.44,True,True
+4526,東台,41.05,7.88,3.13,75.6,24.02,2,81.0,37.3,53.36,True,True
+6902,走著瞧-創,166.0,7.79,1.93,68.0,15.23,6,17.9,31.2,53.08,True,True
