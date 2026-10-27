@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+3702,大聯大,116.5,1.75,1.53,54.4,1.59,8,146.5,5.0,65.24,True,True
+2379,瑞昱,793.0,2.72,1.9,61.4,5.45,3,23.4,11.1,55.64,True,True
+2347,聯強,102.0,2.72,1.57,66.9,6.52,2,158.8,16.6,54.83,True,True
+3533,嘉澤,1925.0,7.24,1.71,61.1,9.6,2,16.1,20.7,53.3,True,True
+6770,力積電,69.4,4.52,1.6,49.5,-1.92,8,94.0,1.5,43.87,True,False
