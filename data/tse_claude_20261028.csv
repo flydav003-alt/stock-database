@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2049,上銀,343.5,4.57,2.06,56.4,4.87,2,30.1,0.0,54.46,True,True
+1597,直得,149.0,3.47,1.78,54.1,4.47,2,62.3,13.3,41.24,True,True
+4576,大銀微系統,227.5,3.88,1.83,53.3,0.77,2,74.7,14.9,39.1,True,True
+3029,零壹,128.0,-0.78,1.51,65.8,6.95,1,38.6,12.8,21.15,True,True
+4967,十銓,279.5,5.87,2.66,61.0,4.7,3,109.7,0.5,15.36,False,True
