@@ -1,0 +1,5 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2426,鼎元,97.0,6.36,2.91,52.3,-0.62,3,40.9,6.8,34.17,True,False
+3006,晶豪科,282.5,2.54,2.16,57.8,6.32,7,470.2,4.6,23.27,False,True
+4967,十銓,286.5,2.5,2.61,64.6,7.14,4,109.7,5.1,17.23,False,True
+6415,矽力*-KY,524.0,-0.19,1.69,65.8,16.72,2,50.8,16.1,15.68,False,True
