@@ -1,0 +1,6 @@
+﻿stock_id,name,close,daily_return_pct,vol_ratio,rsi14,ma28_bias_pct,inst_consec_days,yoy_revenue_pct,past_42d_pct,composite_score,is_early_breakout,is_strong_confirm
+2603,長榮,271.5,4.02,2.15,68.2,8.83,11,65.0,17.5,67.44,True,True
+2609,陽明,63.5,2.42,2.02,58.2,3.38,5,69.9,10.2,47.68,True,True
+6155,鈞寶,70.1,-0.57,2.19,56.2,6.26,0,35.7,25.2,15.93,True,False
+2379,瑞昱,803.0,1.13,1.61,63.8,5.43,3,23.4,9.4,11.73,False,True
+2352,佳世達,33.8,3.05,2.12,79.2,14.7,1,8.3,20.3,10.56,False,True
